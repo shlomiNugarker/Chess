@@ -1,0 +1,52 @@
+.board {
+  min-height: 100vh;
+  grid-area: board;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  table {
+    border-spacing: 0;
+    color: black;
+    font-size: 34px;
+
+    tr {
+      .td {
+        width: 50px;
+        height: 50px;
+        padding: 0;
+        cursor: pointer;
+
+        text-align: center;
+        &.white {
+          background-color: #f0d9b5;
+        }
+        &.black {
+          background-color: #b58863;
+        }
+
+        &.selected {
+          background-color: #646f40;
+        }
+
+        &.mark {
+          // background-color: #646e40;
+          // margin: 40px;
+          // border: 1px solid;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          .span {
+            pointer-events: none;
+            background-color: #646f40;
+            border-radius: 50%;
+            width: 10px;
+            height: 10px;
+          }
+        }
+      }
+    }
+  }
+}
