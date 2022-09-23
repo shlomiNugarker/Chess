@@ -40,9 +40,7 @@ function cellClicked(ev: MouseEvent) {
       cleanBoard()
       return
     }
-
     cleanBoard()
-
     const isSelected = ev.target.classList.contains('selected')
 
     if (!isSelected) {
@@ -50,7 +48,7 @@ function cellClicked(ev: MouseEvent) {
       gSelectedElCell = ev.target
     }
 
-    // console.log('ev.target.id: ', ev.target.id)
+    console.log('ev.target.id: ', ev.target.id)
     var cellCoord = getCellCoord(ev.target.id)
     var piece = gBoard[cellCoord.i][cellCoord.j]
 
@@ -142,6 +140,33 @@ function getAllPossibleCoordsBishop(
 
 function getAllPossibleCoordsKnight(pieceCoord: { i: number; j: number }) {
   var res: { i: number; j: number }[] = []
+
+  const possibleSteps = [
+    { i: -2, j: -1 },
+    { i: -2, j: 1 },
+    { i: -1, j: 2 },
+    { i: -1, j: -2 },
+    { i: 1, j: -2 },
+    { i: 1, j: 2 },
+    { i: 2, j: 1 },
+    { i: 2, j: -1 },
+  ]
+
+  for (let k = 0; k < possibleSteps.length; k++) {
+    const diffI = possibleSteps[k].i
+    const diffJ = possibleSteps[k].j
+
+    var nextCoord = { i: pieceCoord.i + diffI, j: pieceCoord.j + diffJ }
+
+    if (
+      nextCoord.i >= 0 &&
+      nextCoord.i < 8 &&
+      nextCoord.j >= 0 &&
+      nextCoord.j < 8
+    ) {
+      if (isEmptyCell(nextCoord)) res.push(nextCoord)
+    }
+  }
   return res
 }
 

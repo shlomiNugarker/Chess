@@ -39,7 +39,7 @@ function cellClicked(ev) {
             ev.target.classList.add('selected');
             gSelectedElCell = ev.target;
         }
-        // console.log('ev.target.id: ', ev.target.id)
+        console.log('ev.target.id: ', ev.target.id);
         var cellCoord = getCellCoord(ev.target.id);
         var piece = gBoard[cellCoord.i][cellCoord.j];
         var possibleCoords = [];
@@ -112,6 +112,28 @@ function getAllPossibleCoordsBishop(pieceCoord, isWhite) {
 }
 function getAllPossibleCoordsKnight(pieceCoord) {
     var res = [];
+    var possibleSteps = [
+        { i: -2, j: -1 },
+        { i: -2, j: 1 },
+        { i: -1, j: 2 },
+        { i: -1, j: -2 },
+        { i: 1, j: -2 },
+        { i: 1, j: 2 },
+        { i: 2, j: 1 },
+        { i: 2, j: -1 },
+    ];
+    for (var k = 0; k < possibleSteps.length; k++) {
+        var diffI = possibleSteps[k].i;
+        var diffJ = possibleSteps[k].j;
+        var nextCoord = { i: pieceCoord.i + diffI, j: pieceCoord.j + diffJ };
+        if (nextCoord.i >= 0 &&
+            nextCoord.i < 8 &&
+            nextCoord.j >= 0 &&
+            nextCoord.j < 8) {
+            if (isEmptyCell(nextCoord))
+                res.push(nextCoord);
+        }
+    }
     return res;
 }
 function getAllPossibleCoordsPawn(pieceCoord, isWhite) {
