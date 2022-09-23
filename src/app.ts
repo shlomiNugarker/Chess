@@ -1,25 +1,30 @@
 'use strick'
 
 const KING_WHITE = '♔'
-const QUEEN_WHITE = '♕'
-const ROOK_WHITE = '♖'
-const BISHOP_WHITE = '♗'
-const KNIGHT_WHITE = '♘'
-const PAWN_WHITE = '♙'
 const KING_BLACK = '♚'
-const QUEEN_BLACK = '♛'
-const ROOK_BLACK = '♜'
+
+const BISHOP_WHITE = '♗'
 const BISHOP_BLACK = '♝'
-const KNIGHT_BLACK = '♞'
+
+const PAWN_WHITE = '♙'
 const PAWN_BLACK = '♟'
+
+const QUEEN_WHITE = '♕'
+const QUEEN_BLACK = '♛'
+
+const ROOK_WHITE = '♖'
+const ROOK_BLACK = '♜'
+
+const KNIGHT_WHITE = '♘'
+const KNIGHT_BLACK = '♞'
 
 let gGame = {
   isOn: false,
   isBlackTurn: false,
 }
 
-var gBoard: string[][]
-var gSelectedElCell: HTMLElement | Element | null = null
+let gBoard: string[][]
+let gSelectedElCell: HTMLElement | Element | null = null
 
 function init() {
   gBoard = buildBoard()
@@ -48,22 +53,23 @@ function cellClicked(ev: MouseEvent) {
       gSelectedElCell = ev.target
     }
 
-    console.log('ev.target.id: ', ev.target.id)
-    var cellCoord = getCellCoord(ev.target.id)
-    var piece = gBoard[cellCoord.i][cellCoord.j]
+    // console.log('ev.target.id: ', ev.target.id)
+    const cellCoord = getCellCoord(ev.target.id)
+    const piece = gBoard[cellCoord.i][cellCoord.j]
 
-    var possibleCoords: { i: number; j: number }[] = []
+    let possibleCoords: { i: number; j: number }[] = []
     switch (piece) {
+      case QUEEN_WHITE:
+      case QUEEN_BLACK:
+        possibleCoords = getAllPossibleCoordsQueen(cellCoord)
+        break
       case ROOK_BLACK:
       case ROOK_WHITE:
         possibleCoords = getAllPossibleCoordsRook(cellCoord)
         break
       case BISHOP_BLACK:
       case BISHOP_WHITE:
-        possibleCoords = getAllPossibleCoordsBishop(
-          cellCoord,
-          piece === BISHOP_WHITE
-        )
+        possibleCoords = getAllPossibleCoordsBishop(cellCoord)
         break
       case KNIGHT_BLACK:
       case KNIGHT_WHITE:
@@ -82,25 +88,125 @@ function cellClicked(ev: MouseEvent) {
 }
 
 function markCells(coords: { i: number; j: number }[]) {
-  for (var i = 0; i < coords.length; i++) {
-    var coord = coords[i]
-    var elCell = document.querySelector(`#cell-${coord.i}-${coord.j}`)
+  for (let i = 0; i < coords.length; i++) {
+    const coord = coords[i]
+    let elCell = document.querySelector(`#cell-${coord.i}-${coord.j}`)
     if (!elCell) return
     elCell.innerHTML = '<span class="span"></span>'
     elCell.classList.add('mark')
   }
 }
 
-function getAllPossibleCoordsRook(pieceCoord: { i: number; j: number }) {
-  var res: { i: number; j: number }[] = []
+function getAllPossibleCoordsQueen(pieceCoord: { i: number; j: number }) {
+  let res: { i: number; j: number }[] = []
+
+  const possibleDir = [
+    // Bishop:
+    { i: 1, j: -1 }, //bottomLeft
+    { i: 1, j: 1 }, //bottomRight
+    { i: -1, j: -1 }, //topLeft
+    { i: -1, j: 1 }, //topRight
+    // Rook:
+    { i: -1, j: 0 }, //to top
+    { i: 1, j: 0 }, // to bottom
+    { i: 0, j: 1 }, // to right
+    { i: 0, j: -1 }, // to left
+  ]
+
+  for (let k = 0; k < possibleDir.length; k++) {
+    for (let i = 1; i <= 8; i++) {
+      const diffI = i * possibleDir[k].i
+      const diffJ = i * possibleDir[k].j
+
+      const nextCoord = {
+        i: pieceCoord.i + diffI,
+        j: pieceCoord.j - diffJ,
+      }
+
+      if (
+        nextCoord.i > 7 ||
+        nextCoord.i < 0 ||
+        nextCoord.j > 7 ||
+        nextCoord.j < 0
+      ) {
+        break
+      }
+
+      if (isEmptyCell(nextCoord)) {
+        res.push(nextCoord)
+      } else {
+        break
+      }
+    }
+  }
+
   return res
 }
 
-function getAllPossibleCoordsBishop(
-  pieceCoord: { i: number; j: number },
-  isWhite: boolean
-) {
-  var res: { i: number; j: number }[] = []
+function getAllPossibleCoordsRook(pieceCoord: { i: number; j: number }) {
+  let res: { i: number; j: number }[] = []
+
+  const possibleDir = [
+    { i: -1, j: 0 }, //to top
+    { i: 1, j: 0 }, // to bottom
+    { i: 0, j: 1 }, // to right
+    { i: 0, j: -1 }, // to left
+  ]
+
+  var nextCoord = {
+    i: pieceCoord.i,
+    j: pieceCoord.j + 3,
+  }
+  if (isEmptyCell(nextCoord)) {
+    res.push(nextCoord)
+  }
+  var nextCoord = {
+    i: pieceCoord.i,
+    j: pieceCoord.j + 4,
+  }
+  if (isEmptyCell(nextCoord)) {
+    res.push(nextCoord)
+  }
+  var nextCoord = {
+    i: pieceCoord.i,
+    j: pieceCoord.j + 5,
+  }
+  if (isEmptyCell(nextCoord)) {
+    res.push(nextCoord)
+  }
+
+  for (let k = 0; k < possibleDir.length; k++) {
+    for (let i = 1; i <= 8; i++) {
+      const diffI = i * possibleDir[k].i
+      const diffJ = i * possibleDir[k].j
+
+      const nextCoord = {
+        i: pieceCoord.i + diffI,
+        j: pieceCoord.j + diffJ,
+      }
+      if (
+        nextCoord.i > 7 ||
+        nextCoord.i < 0 ||
+        nextCoord.j > 7 ||
+        nextCoord.j < 0
+      ) {
+        break
+      }
+
+      if (isEmptyCell(nextCoord)) {
+        res.push(nextCoord)
+      } else {
+        break
+      }
+    }
+  }
+  console.log(res)
+
+  return res
+}
+
+function getAllPossibleCoordsBishop(pieceCoord: { i: number; j: number }) {
+  let res: { i: number; j: number }[] = []
 
   const possibleDir = [
     { i: 1, j: -1 }, //bottomLeft
@@ -111,10 +217,10 @@ function getAllPossibleCoordsBishop(
 
   for (let k = 0; k < possibleDir.length; k++) {
     for (let i = 1; i <= 8; i++) {
-      var diffI = i * possibleDir[k].i
-      var diffJ = i * possibleDir[k].j
+      const diffI = i * possibleDir[k].i
+      const diffJ = i * possibleDir[k].j
 
-      var nextCoord = {
+      const nextCoord = {
         i: pieceCoord.i + diffI,
         j: pieceCoord.j - diffJ,
       }
@@ -139,7 +245,7 @@ function getAllPossibleCoordsBishop(
 }
 
 function getAllPossibleCoordsKnight(pieceCoord: { i: number; j: number }) {
-  var res: { i: number; j: number }[] = []
+  let res: { i: number; j: number }[] = []
 
   const possibleSteps = [
     { i: -2, j: -1 },
@@ -155,8 +261,7 @@ function getAllPossibleCoordsKnight(pieceCoord: { i: number; j: number }) {
   for (let k = 0; k < possibleSteps.length; k++) {
     const diffI = possibleSteps[k].i
     const diffJ = possibleSteps[k].j
-
-    var nextCoord = { i: pieceCoord.i + diffI, j: pieceCoord.j + diffJ }
+    const nextCoord = { i: pieceCoord.i + diffI, j: pieceCoord.j + diffJ }
 
     if (
       nextCoord.i >= 0 &&
@@ -174,10 +279,10 @@ function getAllPossibleCoordsPawn(
   pieceCoord: { i: number; j: number },
   isWhite: boolean
 ) {
-  var res: { i: number; j: number }[] = []
+  let res: { i: number; j: number }[] = []
 
-  var diff = isWhite ? -1 : 1
-  var nextCoord = { i: pieceCoord.i + diff, j: pieceCoord.j }
+  let diff = isWhite ? -1 : 1
+  let nextCoord = { i: pieceCoord.i + diff, j: pieceCoord.j }
   if (isEmptyCell(nextCoord)) res.push(nextCoord)
   else return res
 
@@ -191,8 +296,8 @@ function getAllPossibleCoordsPawn(
 }
 
 function getCellCoord(strCellId: string) {
-  var parts = strCellId.split('-')
-  var coord = { i: +parts[1], j: +parts[2] }
+  const parts = strCellId.split('-')
+  const coord = { i: +parts[1], j: +parts[2] }
   return coord
 }
 
@@ -204,11 +309,11 @@ function movePiece(
   elFromCell: HTMLElement | Element,
   elToCell: HTMLElement | Element
 ) {
-  var fromCoord = getCellCoord(elFromCell.id)
-  var toCoord = getCellCoord(elToCell.id)
+  const fromCoord = getCellCoord(elFromCell.id)
+  const toCoord = getCellCoord(elToCell.id)
 
   // update the MODEL
-  var piece = gBoard[fromCoord.i][fromCoord.j]
+  const piece = gBoard[fromCoord.i][fromCoord.j]
   gBoard[fromCoord.i][fromCoord.j] = ''
   gBoard[toCoord.i][toCoord.j] = piece
   // update the DOM
@@ -217,8 +322,8 @@ function movePiece(
 }
 
 function cleanBoard() {
-  var elTds = document.querySelectorAll('.mark, .selected')
-  for (var i = 0; i < elTds.length; i++) {
+  const elTds = document.querySelectorAll('.mark, .selected')
+  for (let i = 0; i < elTds.length; i++) {
     elTds[i].classList.remove('mark', 'selected')
   }
 }
@@ -229,15 +334,15 @@ function restartGame() {
 }
 
 function renderBoard(board: string[][]) {
-  var strHtml = ''
-  for (var i = 0; i < board.length; i++) {
-    var row = board[i]
+  let strHtml = ''
+  for (let i = 0; i < board.length; i++) {
+    const row = board[i]
     strHtml += '<tr>'
-    for (var j = 0; j < row.length; j++) {
-      var cell = row[j]
+    for (let j = 0; j < row.length; j++) {
+      const cell = row[j]
       // figure class name
-      var className = (i + j) % 2 === 0 ? 'white' : 'black'
-      var tdId = `cell-${i}-${j}`
+      const className = (i + j) % 2 === 0 ? 'white' : 'black'
+      const tdId = `cell-${i}-${j}`
 
       strHtml += `<td id="${tdId}" data-i="${i}" data-j="${j}" class="${className} td" >            
                     ${cell}                   
@@ -245,17 +350,17 @@ function renderBoard(board: string[][]) {
     }
     strHtml += '</tr>'
   }
-  var elMat = document.querySelector('table')
+  const elMat = document.querySelector('table')
   if (elMat) elMat.innerHTML = strHtml
 }
 
 function buildBoard(): string[][] {
   //build the board 8 * 8
-  var board: string[][] = []
-  for (var i = 0; i < 8; i++) {
+  const board: string[][] = []
+  for (let i = 0; i < 8; i++) {
     board[i] = []
-    for (var j = 0; j < 8; j++) {
-      var piece = ''
+    for (let j = 0; j < 8; j++) {
+      let piece = ''
       if (i === 1) piece = PAWN_BLACK
       if (i === 6) piece = PAWN_WHITE
       board[i][j] = piece
