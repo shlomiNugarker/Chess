@@ -39,6 +39,10 @@
           justify-content: center;
           align-items: center;
 
+          &:hover {
+            background-color: rgb(132 121 78);
+          }
+
           .span {
             pointer-events: none;
             background-color: #646f40;

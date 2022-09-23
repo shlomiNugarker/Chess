@@ -37,6 +37,9 @@
   justify-content: center;
   align-items: center;
 }
+.board table tr .td.mark:hover {
+  background-color: rgb(132, 121, 78);
+}
 .board table tr .td.mark .span {
   pointer-events: none;
   background-color: #646f40;

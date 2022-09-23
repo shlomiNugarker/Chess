@@ -53,12 +53,16 @@ function cellClicked(ev: MouseEvent) {
       gSelectedElCell = ev.target
     }
 
-    // console.log('ev.target.id: ', ev.target.id)
+    console.log('ev.target.id: ', ev.target.id)
     const cellCoord = getCellCoord(ev.target.id)
     const piece = gBoard[cellCoord.i][cellCoord.j]
 
     let possibleCoords: { i: number; j: number }[] = []
     switch (piece) {
+      case KING_WHITE:
+      case KING_BLACK:
+        possibleCoords = getAllPossibleCoordsKing(cellCoord)
+        break
       case QUEEN_WHITE:
       case QUEEN_BLACK:
         possibleCoords = getAllPossibleCoordsQueen(cellCoord)
@@ -95,6 +99,37 @@ function markCells(coords: { i: number; j: number }[]) {
     elCell.innerHTML = '<span class="span"></span>'
     elCell.classList.add('mark')
   }
+}
+
+function getAllPossibleCoordsKing(pieceCoord: { i: number; j: number }) {
+  let res: { i: number; j: number }[] = []
+
+  const possibleSteps = [
+    { i: -1, j: 0 },
+    { i: 0, j: 1 },
+    { i: -1, j: 1 },
+    { i: -1, j: -1 },
+    { i: 0, j: -1 },
+    { i: 1, j: 0 },
+    { i: 1, j: -1 },
+    { i: 1, j: 1 },
+  ]
+
+  for (let k = 0; k < possibleSteps.length; k++) {
+    const diffI = possibleSteps[k].i
+    const diffJ = possibleSteps[k].j
+    const nextCoord = { i: pieceCoord.i + diffI, j: pieceCoord.j + diffJ }
+
+    if (
+      nextCoord.i >= 0 &&
+      nextCoord.i < 8 &&
+      nextCoord.j >= 0 &&
+      nextCoord.j < 8
+    ) {
+      if (isEmptyCell(nextCoord)) res.push(nextCoord)
+    }
+  }
+  return res
 }
 
 function getAllPossibleCoordsQueen(pieceCoord: { i: number; j: number }) {
@@ -152,28 +187,6 @@ function getAllPossibleCoordsRook(pieceCoord: { i: number; j: number }) {
     { i: 0, j: 1 }, // to right
     { i: 0, j: -1 }, // to left
   ]
-
-  var nextCoord = {
-    i: pieceCoord.i,
-    j: pieceCoord.j + 3,
-  }
-  if (isEmptyCell(nextCoord)) {
-    res.push(nextCoord)
-  }
-  var nextCoord = {
-    i: pieceCoord.i,
-    j: pieceCoord.j + 4,
-  }
-  if (isEmptyCell(nextCoord)) {
-    res.push(nextCoord)
-  }
-  var nextCoord = {
-    i: pieceCoord.i,
-    j: pieceCoord.j + 5,
-  }
-  if (isEmptyCell(nextCoord)) {
-    res.push(nextCoord)
-  }
 
   for (let k = 0; k < possibleDir.length; k++) {
     for (let i = 1; i <= 8; i++) {
@@ -377,7 +390,7 @@ function buildBoard(): string[][] {
   board[7][1] = board[7][6] = KNIGHT_WHITE
   board[7][2] = board[7][5] = BISHOP_WHITE
   board[7][3] = QUEEN_WHITE
-  board[7][4] = KING_WHITE
+  board[4][4] = KING_WHITE
 
   // console.table(board)
   return board
