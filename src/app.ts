@@ -62,7 +62,10 @@ function cellClicked(ev: MouseEvent) {
         break
       case BISHOP_BLACK:
       case BISHOP_WHITE:
-        possibleCoords = getAllPossibleCoordsBishop(cellCoord)
+        possibleCoords = getAllPossibleCoordsBishop(
+          cellCoord,
+          piece === BISHOP_WHITE
+        )
         break
       case KNIGHT_BLACK:
       case KNIGHT_WHITE:
@@ -94,14 +97,54 @@ function getAllPossibleCoordsRook(pieceCoord: { i: number; j: number }) {
   var res: { i: number; j: number }[] = []
   return res
 }
-function getAllPossibleCoordsBishop(pieceCoord: { i: number; j: number }) {
+
+function getAllPossibleCoordsBishop(
+  pieceCoord: { i: number; j: number },
+  isWhite: boolean
+) {
   var res: { i: number; j: number }[] = []
+
+  const possibleDir = [
+    { i: 1, j: -1 }, //bottomLeft
+    { i: 1, j: 1 }, //bottomRight
+    { i: -1, j: -1 }, //topLeft
+    { i: -1, j: 1 }, //topRight
+  ]
+
+  for (let k = 0; k < possibleDir.length; k++) {
+    for (let i = 1; i <= 8; i++) {
+      var diffI = i * possibleDir[k].i
+      var diffJ = i * possibleDir[k].j
+
+      var nextCoord = {
+        i: pieceCoord.i + diffI,
+        j: pieceCoord.j - diffJ,
+      }
+
+      if (
+        nextCoord.i > 7 ||
+        nextCoord.i < 0 ||
+        nextCoord.j > 7 ||
+        nextCoord.j < 0
+      ) {
+        break
+      }
+
+      if (isEmptyCell(nextCoord)) {
+        res.push(nextCoord)
+      } else {
+        break
+      }
+    }
+  }
   return res
 }
+
 function getAllPossibleCoordsKnight(pieceCoord: { i: number; j: number }) {
   var res: { i: number; j: number }[] = []
   return res
 }
+
 function getAllPossibleCoordsPawn(
   pieceCoord: { i: number; j: number },
   isWhite: boolean
