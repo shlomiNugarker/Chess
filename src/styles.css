@@ -50,6 +50,9 @@
 .board table tr .td.eatable {
   border-radius: 50%;
 }
+.board table tr .td.castling {
+  border-radius: 50%;
+}
 .board table tr .td.white {
   background-color: #f0d9b5;
 }

@@ -26,6 +26,16 @@ let gGame = {
 let gBoard: string[][]
 let gSelectedElCell: HTMLElement | Element | null = null
 
+// for castling
+let isLeftWhiteRookMoved = false
+let isRightWhiteRookMoved = false
+
+let isLeftBlackRookMoved = false
+let isRighBlackeRookMoved = false
+
+let isWhiteKingMoved = false
+let isBlackKingMoved = false
+
 function init() {
   gBoard = buildBoard()
   renderBoard(gBoard)
@@ -46,6 +56,15 @@ function cellClicked(ev: MouseEvent) {
 
     if (ev.target.classList.contains('eatable') && gSelectedElCell) {
       movePiece(gSelectedElCell, ev.target)
+      cleanBoard()
+      return
+    }
+    if (ev.target.classList.contains('castling') && gSelectedElCell) {
+      // movePiece(gSelectedElCell, ev.target)
+      console.log('do casliing')
+
+      doCastling(gSelectedElCell, ev.target)
+
       cleanBoard()
       return
     }
@@ -104,6 +123,79 @@ function cellClicked(ev: MouseEvent) {
   }
 }
 
+function doCastling(elFromCell: HTMLElement | Element, elToCell: Element) {
+  const fromCoord = getCellCoord(elFromCell.id)
+  const toCoord = getCellCoord(elToCell.id)
+
+  if (gBoard[toCoord.i][toCoord.j] === KING_WHITE) {
+    const rookPiece = gBoard[fromCoord.i][fromCoord.j]
+    const kingPiece = gBoard[toCoord.i][toCoord.j]
+
+    gBoard[fromCoord.i][fromCoord.j] = ''
+    gBoard[toCoord.i][toCoord.j] = ''
+
+    if (fromCoord.j === 0) {
+      gBoard[7][2] = rookPiece
+      gBoard[7][3] = kingPiece
+      // // update the DOM
+      ;(elFromCell as HTMLElement).innerText = ''
+      ;(elToCell as HTMLElement).innerText = ''
+      ;(document.querySelector(`#cell-7-3`) as HTMLElement).innerText =
+        rookPiece
+      ;(document.querySelector(`#cell-7-2`) as HTMLElement).innerText =
+        kingPiece
+
+      switchTurn()
+    } else if (fromCoord.j === 7) {
+      gBoard[7][6] = rookPiece
+      gBoard[7][5] = kingPiece
+      // // update the DOM
+      ;(elFromCell as HTMLElement).innerText = ''
+      ;(elToCell as HTMLElement).innerText = ''
+      ;(document.querySelector(`#cell-7-6`) as HTMLElement).innerText =
+        rookPiece
+      ;(document.querySelector(`#cell-7-5`) as HTMLElement).innerText =
+        kingPiece
+
+      switchTurn()
+    }
+  }
+
+  if (gBoard[toCoord.i][toCoord.j] === KING_BLACK) {
+    const rookPiece = gBoard[fromCoord.i][fromCoord.j]
+    const kingPiece = gBoard[toCoord.i][toCoord.j]
+
+    gBoard[fromCoord.i][fromCoord.j] = ''
+    gBoard[toCoord.i][toCoord.j] = ''
+
+    if (fromCoord.j === 0) {
+      gBoard[0][2] = rookPiece
+      gBoard[0][3] = kingPiece
+      // // update the DOM
+      ;(elFromCell as HTMLElement).innerText = ''
+      ;(elToCell as HTMLElement).innerText = ''
+      ;(document.querySelector(`#cell-0-3`) as HTMLElement).innerText =
+        rookPiece
+      ;(document.querySelector(`#cell-0-2`) as HTMLElement).innerText =
+        kingPiece
+
+      switchTurn()
+    } else if (fromCoord.j === 7) {
+      gBoard[0][6] = rookPiece
+      gBoard[0][5] = kingPiece
+      // // update the DOM
+      ;(elFromCell as HTMLElement).innerText = ''
+      ;(elToCell as HTMLElement).innerText = ''
+      ;(document.querySelector(`#cell-0-6`) as HTMLElement).innerText =
+        rookPiece
+      ;(document.querySelector(`#cell-0-5`) as HTMLElement).innerText =
+        kingPiece
+
+      switchTurn()
+    }
+  }
+}
+
 function isColorPieceWorthCurrPlayerColor(piece: string) {
   return gGame.isBlackTurn === isBlackPiece(piece)
 }
@@ -157,7 +249,9 @@ function markCells(coords: { i: number; j: number }[]) {
     let elCell = document.querySelector(`#cell-${coord.i}-${coord.j}`)
     if (!elCell) return
 
-    if (gBoard[coord.i][coord.j]) {
+    if (isColorPieceWorthCurrPlayerColor(gBoard[coord.i][coord.j])) {
+      elCell.classList.add('castling')
+    } else if (gBoard[coord.i][coord.j]) {
       elCell.classList.add('eatable')
     } else {
       elCell.innerHTML = '<span class="span"></span>'
@@ -281,14 +375,35 @@ function getAllPossibleCoordsRook(pieceCoord: { i: number; j: number }) {
         res.push(nextCoord)
       } else {
         const piece = gBoard[nextCoord.i][nextCoord.j]
-        if (!isColorPieceWorthCurrPlayerColor(piece)) res.push(nextCoord) //last coord -> eatable
-
+        if (!isColorPieceWorthCurrPlayerColor(piece))
+          res.push(nextCoord) //last coord -> eatable
+        else if (
+          isColorPieceWorthCurrPlayerColor(piece) &&
+          isOptionToCastling(piece)
+        ) {
+          console.log('casling')
+          res.push(nextCoord)
+        }
         break
       }
     }
   }
 
   return res
+}
+
+function isOptionToCastling(pieceToCastling: string) {
+  if (!gSelectedElCell) return
+  const cellCoord = getCellCoord(gSelectedElCell.id)
+  const currPiece = gBoard[cellCoord.i][cellCoord.j]
+  if (
+    (pieceToCastling === KING_WHITE && currPiece === ROOK_WHITE) ||
+    (pieceToCastling === ROOK_WHITE && currPiece === KING_WHITE) ||
+    (pieceToCastling === KING_BLACK && currPiece === ROOK_BLACK) ||
+    (pieceToCastling === ROOK_BLACK && currPiece === KING_BLACK)
+  ) {
+    return true
+  }
 }
 
 function getAllPossibleCoordsBishop(pieceCoord: { i: number; j: number }) {
@@ -451,9 +566,11 @@ function movePiece(
 }
 
 function cleanBoard() {
-  const elTds = document.querySelectorAll('.mark, .selected, .eatable')
+  const elTds = document.querySelectorAll(
+    '.mark, .selected, .eatable, .castling'
+  )
   for (let i = 0; i < elTds.length; i++) {
-    elTds[i].classList.remove('mark', 'selected', 'eatable')
+    elTds[i].classList.remove('mark', 'selected', 'eatable', 'castling')
   }
 }
 
