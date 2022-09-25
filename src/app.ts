@@ -40,22 +40,35 @@ function init() {
 
 function cellClicked(ev: MouseEvent) {
   if (ev.target instanceof Element) {
+    // console.log('ev.target.id: ', ev.target)
+    const cellCoord = getCellCoord(ev.target.id)
+    const piece = gBoard[cellCoord.i][cellCoord.j]
+
+    if (ev.target.classList.contains('eatable') && gSelectedElCell) {
+      movePiece(gSelectedElCell, ev.target)
+      cleanBoard()
+      return
+    }
+
+    if (!isColorPieceWorthCurrPlayerColor(piece) && piece !== '') return
+
+    if (ev.target.classList.contains('selected')) {
+      ev.target.classList.remove('selected')
+      gSelectedElCell = null
+      cleanBoard()
+      return
+    }
+
     if (ev.target.classList.contains('mark') && gSelectedElCell) {
       movePiece(gSelectedElCell, ev.target)
       cleanBoard()
       return
     }
+
     cleanBoard()
-    const isSelected = ev.target.classList.contains('selected')
 
-    if (!isSelected) {
-      ev.target.classList.add('selected')
-      gSelectedElCell = ev.target
-    }
-
-    console.log('ev.target.id: ', ev.target.id)
-    const cellCoord = getCellCoord(ev.target.id)
-    const piece = gBoard[cellCoord.i][cellCoord.j]
+    ev.target.classList.add('selected')
+    gSelectedElCell = ev.target
 
     let possibleCoords: { i: number; j: number }[] = []
     switch (piece) {
@@ -91,13 +104,65 @@ function cellClicked(ev: MouseEvent) {
   }
 }
 
+function isColorPieceWorthCurrPlayerColor(piece: string) {
+  return gGame.isBlackTurn === isBlackPiece(piece)
+}
+
+function isBlackPiece(piece: string): boolean | undefined {
+  switch (piece) {
+    case KING_WHITE:
+      return false
+
+    case BISHOP_WHITE:
+      return false
+
+    case PAWN_WHITE:
+      return false
+
+    case QUEEN_WHITE:
+      return false
+
+    case ROOK_WHITE:
+      return false
+
+    case KNIGHT_WHITE:
+      return false
+
+    case KING_BLACK:
+      return true
+
+    case BISHOP_BLACK:
+      return true
+
+    case PAWN_BLACK:
+      return true
+
+    case QUEEN_BLACK:
+      return true
+
+    case ROOK_BLACK:
+      return true
+
+    case KNIGHT_BLACK:
+      return true
+
+    default:
+      return undefined
+  }
+}
+
 function markCells(coords: { i: number; j: number }[]) {
   for (let i = 0; i < coords.length; i++) {
     const coord = coords[i]
     let elCell = document.querySelector(`#cell-${coord.i}-${coord.j}`)
     if (!elCell) return
-    elCell.innerHTML = '<span class="span"></span>'
-    elCell.classList.add('mark')
+
+    if (gBoard[coord.i][coord.j]) {
+      elCell.classList.add('eatable')
+    } else {
+      elCell.innerHTML = '<span class="span"></span>'
+      elCell.classList.add('mark')
+    }
   }
 }
 
@@ -127,6 +192,10 @@ function getAllPossibleCoordsKing(pieceCoord: { i: number; j: number }) {
       nextCoord.j < 8
     ) {
       if (isEmptyCell(nextCoord)) res.push(nextCoord)
+      else {
+        const piece = gBoard[nextCoord.i][nextCoord.j]
+        if (!isColorPieceWorthCurrPlayerColor(piece)) res.push(nextCoord) //push eatable coord
+      }
     }
   }
   return res
@@ -170,6 +239,8 @@ function getAllPossibleCoordsQueen(pieceCoord: { i: number; j: number }) {
       if (isEmptyCell(nextCoord)) {
         res.push(nextCoord)
       } else {
+        const piece = gBoard[nextCoord.i][nextCoord.j]
+        if (!isColorPieceWorthCurrPlayerColor(piece)) res.push(nextCoord) //last coord -> eatable
         break
       }
     }
@@ -209,11 +280,13 @@ function getAllPossibleCoordsRook(pieceCoord: { i: number; j: number }) {
       if (isEmptyCell(nextCoord)) {
         res.push(nextCoord)
       } else {
+        const piece = gBoard[nextCoord.i][nextCoord.j]
+        if (!isColorPieceWorthCurrPlayerColor(piece)) res.push(nextCoord) //last coord -> eatable
+
         break
       }
     }
   }
-  console.log(res)
 
   return res
 }
@@ -237,7 +310,6 @@ function getAllPossibleCoordsBishop(pieceCoord: { i: number; j: number }) {
         i: pieceCoord.i + diffI,
         j: pieceCoord.j - diffJ,
       }
-
       if (
         nextCoord.i > 7 ||
         nextCoord.i < 0 ||
@@ -250,6 +322,8 @@ function getAllPossibleCoordsBishop(pieceCoord: { i: number; j: number }) {
       if (isEmptyCell(nextCoord)) {
         res.push(nextCoord)
       } else {
+        const piece = gBoard[nextCoord.i][nextCoord.j]
+        if (!isColorPieceWorthCurrPlayerColor(piece)) res.push(nextCoord) //last coord -> eatable
         break
       }
     }
@@ -283,6 +357,10 @@ function getAllPossibleCoordsKnight(pieceCoord: { i: number; j: number }) {
       nextCoord.j < 8
     ) {
       if (isEmptyCell(nextCoord)) res.push(nextCoord)
+      else {
+        const piece = gBoard[nextCoord.i][nextCoord.j]
+        if (!isColorPieceWorthCurrPlayerColor(piece)) res.push(nextCoord) //-> eatable  coord
+      }
     }
   }
   return res
@@ -297,12 +375,44 @@ function getAllPossibleCoordsPawn(
   let diff = isWhite ? -1 : 1
   let nextCoord = { i: pieceCoord.i + diff, j: pieceCoord.j }
   if (isEmptyCell(nextCoord)) res.push(nextCoord)
-  else return res
 
   if ((pieceCoord.i === 1 && !isWhite) || (pieceCoord.i === 6 && isWhite)) {
     diff *= 2
     nextCoord = { i: pieceCoord.i + diff, j: pieceCoord.j }
     if (isEmptyCell(nextCoord)) res.push(nextCoord)
+  }
+
+  if (isWhite && pieceCoord.i !== 6) {
+    // eatable:
+    nextCoord = { i: pieceCoord.i - 1, j: pieceCoord.j - 1 }
+    if (
+      // if is there piece a & the piece is not mine
+      gBoard[nextCoord.i][nextCoord.j] &&
+      !isColorPieceWorthCurrPlayerColor(gBoard[nextCoord.i][nextCoord.j])
+    )
+      res.push(nextCoord)
+
+    nextCoord = { i: pieceCoord.i - 1, j: pieceCoord.j + 1 }
+    if (
+      gBoard[nextCoord.i][nextCoord.j] &&
+      !isColorPieceWorthCurrPlayerColor(gBoard[nextCoord.i][nextCoord.j])
+    )
+      res.push(nextCoord)
+  } else if (!isWhite && pieceCoord.i !== 1) {
+    // eatable:
+    nextCoord = { i: pieceCoord.i + 1, j: pieceCoord.j + 1 }
+    if (
+      gBoard[nextCoord.i][nextCoord.j] &&
+      !isColorPieceWorthCurrPlayerColor(gBoard[nextCoord.i][nextCoord.j])
+    )
+      res.push(nextCoord)
+
+    nextCoord = { i: pieceCoord.i + 1, j: pieceCoord.j - 1 }
+    if (
+      gBoard[nextCoord.i][nextCoord.j] &&
+      !isColorPieceWorthCurrPlayerColor(gBoard[nextCoord.i][nextCoord.j])
+    )
+      res.push(nextCoord)
   }
 
   return res
@@ -325,6 +435,10 @@ function movePiece(
   const fromCoord = getCellCoord(elFromCell.id)
   const toCoord = getCellCoord(elToCell.id)
 
+  if (gBoard[toCoord.i][toCoord.j]) {
+    console.log('eating !', gBoard[toCoord.i][toCoord.j])
+  }
+
   // update the MODEL
   const piece = gBoard[fromCoord.i][fromCoord.j]
   gBoard[fromCoord.i][fromCoord.j] = ''
@@ -332,18 +446,32 @@ function movePiece(
   // update the DOM
   ;(elFromCell as HTMLElement).innerText = ''
   ;(elToCell as HTMLElement).innerText = piece
+
+  switchTurn()
 }
 
 function cleanBoard() {
-  const elTds = document.querySelectorAll('.mark, .selected')
+  const elTds = document.querySelectorAll('.mark, .selected, .eatable')
   for (let i = 0; i < elTds.length; i++) {
-    elTds[i].classList.remove('mark', 'selected')
+    elTds[i].classList.remove('mark', 'selected', 'eatable')
   }
 }
 
 function restartGame() {
   gBoard = buildBoard()
   renderBoard(gBoard)
+}
+
+function switchTurn() {
+  gGame.isBlackTurn = !gGame.isBlackTurn
+
+  if (gGame.isBlackTurn) {
+    document.querySelector('.turn-white')?.classList.remove('playing')
+    document.querySelector('.turn-black')?.classList.add('playing')
+  } else {
+    document.querySelector('.turn-black')?.classList.remove('playing')
+    document.querySelector('.turn-white')?.classList.add('playing')
+  }
 }
 
 function renderBoard(board: string[][]) {
@@ -390,7 +518,7 @@ function buildBoard(): string[][] {
   board[7][1] = board[7][6] = KNIGHT_WHITE
   board[7][2] = board[7][5] = BISHOP_WHITE
   board[7][3] = QUEEN_WHITE
-  board[4][4] = KING_WHITE
+  board[7][4] = KING_WHITE
 
   // console.table(board)
   return board
