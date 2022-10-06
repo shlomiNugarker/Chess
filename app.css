@@ -62,15 +62,18 @@
 .board table tr .td.selected {
   background-color: #646f40;
 }
-.board table tr .td.mark {
+.board table tr .td.mark,
+.board table tr .td.fake-mark {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.board table tr .td.mark:hover {
+.board table tr .td.mark:hover,
+.board table tr .td.fake-mark:hover {
   background-color: rgb(132, 121, 78);
 }
-.board table tr .td.mark .span {
+.board table tr .td.mark .span,
+.board table tr .td.fake-mark .span {
   pointer-events: none;
   background-color: #646f40;
   border-radius: 50%;
@@ -90,7 +93,7 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  font-family: "Segoe UI", "Roboto", "Oxygen";
+  font-family: 'Segoe UI', 'Roboto', 'Oxygen';
   background-color: #262421;
 }
 
@@ -116,4 +119,4 @@ button {
 }
 button * {
   pointer-events: none;
-}/*# sourceMappingURL=styles.css.map */
+} /*# sourceMappingURL=styles.css.map */

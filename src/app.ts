@@ -1,5 +1,3 @@
-'use strick'
-
 const KING_WHITE = '♔'
 const KING_BLACK = '♚'
 
@@ -36,6 +34,11 @@ let isRighBlackeRookMoved = false
 let isWhiteKingMoved = false
 let isBlackKingMoved = false
 
+window.onload = function () {
+  console.log('init')
+  init()
+}
+
 function init() {
   gBoard = buildBoard()
   renderBoard(gBoard)
@@ -53,42 +56,31 @@ function cellClicked(ev: MouseEvent) {
     // console.log('ev.target.id: ', ev.target)
     const cellCoord = getCellCoord(ev.target.id)
     const piece = gBoard[cellCoord.i][cellCoord.j]
-
     if (ev.target.classList.contains('eatable') && gSelectedElCell) {
       movePiece(gSelectedElCell, ev.target)
       cleanBoard()
       return
     }
     if (ev.target.classList.contains('castling') && gSelectedElCell) {
-      // movePiece(gSelectedElCell, ev.target)
-      console.log('do casliing')
-
       doCastling(gSelectedElCell, ev.target)
-
       cleanBoard()
       return
     }
-
     if (!isColorPieceWorthCurrPlayerColor(piece) && piece !== '') return
-
     if (ev.target.classList.contains('selected')) {
       ev.target.classList.remove('selected')
       gSelectedElCell = null
       cleanBoard()
       return
     }
-
     if (ev.target.classList.contains('mark') && gSelectedElCell) {
       movePiece(gSelectedElCell, ev.target)
       cleanBoard()
       return
     }
-
     cleanBoard()
-
     ev.target.classList.add('selected')
     gSelectedElCell = ev.target
-
     let possibleCoords: { i: number; j: number }[] = []
     switch (piece) {
       case KING_WHITE:
@@ -127,14 +119,21 @@ function doCastling(elFromCell: HTMLElement | Element, elToCell: Element) {
   const fromCoord = getCellCoord(elFromCell.id)
   const toCoord = getCellCoord(elToCell.id)
 
-  if (gBoard[toCoord.i][toCoord.j] === KING_WHITE) {
+  if (
+    gBoard[toCoord.i][toCoord.j] === KING_WHITE
+    //  ||
+    // gBoard[toCoord.i][toCoord.j] === ROOK_WHITE
+  ) {
     const rookPiece = gBoard[fromCoord.i][fromCoord.j]
     const kingPiece = gBoard[toCoord.i][toCoord.j]
 
     gBoard[fromCoord.i][fromCoord.j] = ''
     gBoard[toCoord.i][toCoord.j] = ''
 
-    if (fromCoord.j === 0) {
+    if (
+      fromCoord.j === 0
+      // || toCoord.j === 4
+    ) {
       gBoard[7][2] = rookPiece
       gBoard[7][3] = kingPiece
       // // update the DOM
@@ -146,7 +145,10 @@ function doCastling(elFromCell: HTMLElement | Element, elToCell: Element) {
         kingPiece
 
       switchTurn()
-    } else if (fromCoord.j === 7) {
+    } else if (
+      fromCoord.j === 7
+      // || toCoord.j === 4
+    ) {
       gBoard[7][6] = rookPiece
       gBoard[7][5] = kingPiece
       // // update the DOM
@@ -292,6 +294,27 @@ function getAllPossibleCoordsKing(pieceCoord: { i: number; j: number }) {
       }
     }
   }
+
+  // mark fake tds for cadtling:
+  let selectedCellCoord
+  if (gSelectedElCell) {
+    selectedCellCoord = getCellCoord(gSelectedElCell.id)
+  }
+
+  if (
+    selectedCellCoord &&
+    gBoard[selectedCellCoord.i][selectedCellCoord.j] === KING_WHITE
+  ) {
+    let elCell: HTMLElement | Element | null = null
+    if (!gBoard[selectedCellCoord.i][selectedCellCoord.j + 2]) {
+      elCell = document.querySelector(
+        `#cell-${selectedCellCoord.i}-${selectedCellCoord.j + 3}`
+      )
+      // ;(elCell as HTMLElement).innerHTML = '<span class="span"></span>'
+      ;(elCell as HTMLElement).classList.add('castling')
+    }
+  }
+
   return res
 }
 
@@ -404,6 +427,7 @@ function isOptionToCastling(pieceToCastling: string) {
   ) {
     return true
   }
+  return
 }
 
 function getAllPossibleCoordsBishop(pieceCoord: { i: number; j: number }) {
@@ -602,8 +626,8 @@ function renderBoard(board: string[][]) {
       const className = (i + j) % 2 === 0 ? 'white' : 'black'
       const tdId = `cell-${i}-${j}`
 
-      strHtml += `<td id="${tdId}" data-i="${i}" data-j="${j}" class="${className} td" >            
-                    ${cell}                   
+      strHtml += `<td id="${tdId}" data-i="${i}" data-j="${j}" class="${className} td" >
+                    ${cell}
                   </td>`
     }
     strHtml += '</tr>'
