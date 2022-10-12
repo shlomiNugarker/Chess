@@ -35,7 +35,11 @@ export function getAllPossibleCoordsKing(pieceCoord: { i: number; j: number }) {
   }
 
   // mark fake tds for cadtling:
-  let selectedCellCoord
+  let selectedCellCoord: {
+    i: number
+    j: number
+  } | null = null
+
   if (gState.gSelectedElCell) {
     selectedCellCoord = getCellCoord(gState.gSelectedElCell.id)
   }

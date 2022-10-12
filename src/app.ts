@@ -1,11 +1,20 @@
 import { buildBoard, renderBoard } from './board'
 import { cellClicked, getCellCoord } from './game'
 
-interface IgState {
+export interface IgState {
   isOn: boolean
   isBlackTurn: boolean
   gBoard: string[][]
   gSelectedElCell: HTMLElement | Element | null
+  isKingThreatened: boolean
+  kingPos: {
+    black: { i: number; j: number }
+    white: { i: number; j: number }
+  }
+  eatenPieces: {
+    black: string[]
+    white: string[]
+  }
   gPieces: {
     KING_WHITE: string
     KING_BLACK: string
@@ -27,6 +36,15 @@ export const gState: IgState = {
   isBlackTurn: false,
   gBoard: [],
   gSelectedElCell: null,
+  isKingThreatened: false,
+  kingPos: {
+    black: { i: 0, j: 4 },
+    white: { i: 7, j: 4 },
+  },
+  eatenPieces: {
+    black: [],
+    white: [],
+  },
   gPieces: {
     KING_WHITE: '♔',
     KING_BLACK: '♚',

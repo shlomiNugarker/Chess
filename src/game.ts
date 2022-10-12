@@ -1,93 +1,91 @@
-import { cleanBoard, markCells } from './board'
+import { cleanBoard, markCells, paintKingCellToRed } from './board'
 import { getAllPossibleCoordsBishop } from './possibleCoordsFuncs/getAllPossibleCoordsBishop'
 import { getAllPossibleCoordsKing } from './possibleCoordsFuncs/getAllPossibleCoordsKing'
 import { getAllPossibleCoordsKnight } from './possibleCoordsFuncs/getAllPossibleCoordsKnight'
 import { getAllPossibleCoordsPawn } from './possibleCoordsFuncs/getAllPossibleCoordsPawn'
 import { getAllPossibleCoordsQueen } from './possibleCoordsFuncs/getAllPossibleCoordsQueen'
 import { getAllPossibleCoordsRook } from './possibleCoordsFuncs/getAllPossibleCoordsRook'
-import { isColorPieceWorthCurrPlayerColor, gState } from './app'
+import {
+  isColorPieceWorthCurrPlayerColor,
+  gState,
+  isBlackPiece,
+  IgState,
+} from './app'
+import { getAllPossibleKingCoordsToGetEatenPawn } from './possibleCoordsFuncs/getAllPossibleKingCoordsToGetEatenPawn'
 
 function doCastling(elFromCell: HTMLElement | Element, elToCell: Element) {
-  const fromCoord = getCellCoord(elFromCell.id)
-  const toCoord = getCellCoord(elToCell.id)
+  console.log(elFromCell, elToCell)
 
-  if (
-    gState.gBoard[toCoord.i][toCoord.j] === gState.gPieces.KING_WHITE
-    //  ||
-    // gBoard[toCoord.i][toCoord.j] === ROOK_WHITE
-  ) {
-    const rookPiece = gState.gBoard[fromCoord.i][fromCoord.j]
-    const kingPiece = gState.gBoard[toCoord.i][toCoord.j]
-
-    gState.gBoard[fromCoord.i][fromCoord.j] = ''
-    gState.gBoard[toCoord.i][toCoord.j] = ''
-
-    if (
-      fromCoord.j === 0
-      // || toCoord.j === 4
-    ) {
-      gState.gBoard[7][2] = rookPiece
-      gState.gBoard[7][3] = kingPiece
-      // // update the DOM
-      ;(elFromCell as HTMLElement).innerText = ''
-      ;(elToCell as HTMLElement).innerText = ''
-      ;(document.querySelector(`#cell-7-3`) as HTMLElement).innerText =
-        rookPiece
-      ;(document.querySelector(`#cell-7-2`) as HTMLElement).innerText =
-        kingPiece
-
-      switchTurn()
-    } else if (
-      fromCoord.j === 7
-      // || toCoord.j === 4
-    ) {
-      gState.gBoard[7][6] = rookPiece
-      gState.gBoard[7][5] = kingPiece
-      // // update the DOM
-      ;(elFromCell as HTMLElement).innerText = ''
-      ;(elToCell as HTMLElement).innerText = ''
-      ;(document.querySelector(`#cell-7-6`) as HTMLElement).innerText =
-        rookPiece
-      ;(document.querySelector(`#cell-7-5`) as HTMLElement).innerText =
-        kingPiece
-
-      switchTurn()
-    }
-  }
-
-  if (gState.gBoard[toCoord.i][toCoord.j] === gState.gPieces.KING_BLACK) {
-    const rookPiece = gState.gBoard[fromCoord.i][fromCoord.j]
-    const kingPiece = gState.gBoard[toCoord.i][toCoord.j]
-
-    gState.gBoard[fromCoord.i][fromCoord.j] = ''
-    gState.gBoard[toCoord.i][toCoord.j] = ''
-
-    if (fromCoord.j === 0) {
-      gState.gBoard[0][2] = rookPiece
-      gState.gBoard[0][3] = kingPiece
-      // // update the DOM
-      ;(elFromCell as HTMLElement).innerText = ''
-      ;(elToCell as HTMLElement).innerText = ''
-      ;(document.querySelector(`#cell-0-3`) as HTMLElement).innerText =
-        rookPiece
-      ;(document.querySelector(`#cell-0-2`) as HTMLElement).innerText =
-        kingPiece
-
-      switchTurn()
-    } else if (fromCoord.j === 7) {
-      gState.gBoard[0][6] = rookPiece
-      gState.gBoard[0][5] = kingPiece
-      // // update the DOM
-      ;(elFromCell as HTMLElement).innerText = ''
-      ;(elToCell as HTMLElement).innerText = ''
-      ;(document.querySelector(`#cell-0-6`) as HTMLElement).innerText =
-        rookPiece
-      ;(document.querySelector(`#cell-0-5`) as HTMLElement).innerText =
-        kingPiece
-
-      switchTurn()
-    }
-  }
+  // const fromCoord = getCellCoord(elFromCell.id)
+  // const toCoord = getCellCoord(elToCell.id)
+  // if (
+  //   gState.gBoard[toCoord.i][toCoord.j] === gState.gPieces.KING_WHITE
+  //   //  ||
+  //   // gBoard[toCoord.i][toCoord.j] === ROOK_WHITE
+  // ) {
+  //   const rookPiece = gState.gBoard[fromCoord.i][fromCoord.j]
+  //   const kingPiece = gState.gBoard[toCoord.i][toCoord.j]
+  //   gState.gBoard[fromCoord.i][fromCoord.j] = ''
+  //   gState.gBoard[toCoord.i][toCoord.j] = ''
+  //   if (
+  //     fromCoord.j === 0
+  //     // || toCoord.j === 4
+  //   ) {
+  //     gState.gBoard[7][2] = rookPiece
+  //     gState.gBoard[7][3] = kingPiece
+  //     // // update the DOM
+  //     ;(elFromCell as HTMLElement).innerText = ''
+  //     ;(elToCell as HTMLElement).innerText = ''
+  //     ;(document.querySelector(`#cell-7-3`) as HTMLElement).innerText =
+  //       rookPiece
+  //     ;(document.querySelector(`#cell-7-2`) as HTMLElement).innerText =
+  //       kingPiece
+  //     switchTurn()
+  //   } else if (
+  //     fromCoord.j === 7
+  //     // || toCoord.j === 4
+  //   ) {
+  //     gState.gBoard[7][6] = rookPiece
+  //     gState.gBoard[7][5] = kingPiece
+  //     // // update the DOM
+  //     ;(elFromCell as HTMLElement).innerText = ''
+  //     ;(elToCell as HTMLElement).innerText = ''
+  //     ;(document.querySelector(`#cell-7-6`) as HTMLElement).innerText =
+  //       rookPiece
+  //     ;(document.querySelector(`#cell-7-5`) as HTMLElement).innerText =
+  //       kingPiece
+  //     switchTurn()
+  //   }
+  // }
+  // if (gState.gBoard[toCoord.i][toCoord.j] === gState.gPieces.KING_BLACK) {
+  //   const rookPiece = gState.gBoard[fromCoord.i][fromCoord.j]
+  //   const kingPiece = gState.gBoard[toCoord.i][toCoord.j]
+  //   gState.gBoard[fromCoord.i][fromCoord.j] = ''
+  //   gState.gBoard[toCoord.i][toCoord.j] = ''
+  //   if (fromCoord.j === 0) {
+  //     gState.gBoard[0][2] = rookPiece
+  //     gState.gBoard[0][3] = kingPiece
+  //     // // update the DOM
+  //     ;(elFromCell as HTMLElement).innerText = ''
+  //     ;(elToCell as HTMLElement).innerText = ''
+  //     ;(document.querySelector(`#cell-0-3`) as HTMLElement).innerText =
+  //       rookPiece
+  //     ;(document.querySelector(`#cell-0-2`) as HTMLElement).innerText =
+  //       kingPiece
+  //     switchTurn()
+  //   } else if (fromCoord.j === 7) {
+  //     gState.gBoard[0][6] = rookPiece
+  //     gState.gBoard[0][5] = kingPiece
+  //     // // update the DOM
+  //     ;(elFromCell as HTMLElement).innerText = ''
+  //     ;(elToCell as HTMLElement).innerText = ''
+  //     ;(document.querySelector(`#cell-0-6`) as HTMLElement).innerText =
+  //       rookPiece
+  //     ;(document.querySelector(`#cell-0-5`) as HTMLElement).innerText =
+  //       kingPiece
+  //     switchTurn()
+  //   }
+  // }
 }
 
 export function cellClicked(ev: MouseEvent) {
@@ -98,11 +96,13 @@ export function cellClicked(ev: MouseEvent) {
     if (ev.target.classList.contains('eatable') && gState.gSelectedElCell) {
       movePiece(gState.gSelectedElCell, ev.target)
       cleanBoard()
+
       return
     }
     if (ev.target.classList.contains('castling') && gState.gSelectedElCell) {
       doCastling(gState.gSelectedElCell, ev.target)
       cleanBoard()
+
       return
     }
     if (!isColorPieceWorthCurrPlayerColor(piece) && piece !== '') return
@@ -110,11 +110,19 @@ export function cellClicked(ev: MouseEvent) {
       ev.target.classList.remove('selected')
       gState.gSelectedElCell = null
       cleanBoard()
+
       return
     }
     if (ev.target.classList.contains('mark') && gState.gSelectedElCell) {
+      if (
+        gState.isKingThreatened &&
+        !isNextMoveLegal(gState.gSelectedElCell, ev.target)
+      )
+        return
+
       movePiece(gState.gSelectedElCell, ev.target)
       cleanBoard()
+
       return
     }
     cleanBoard()
@@ -173,9 +181,32 @@ function movePiece(
   const fromCoord = getCellCoord(elFromCell.id)
   const toCoord = getCellCoord(elToCell.id)
 
-  if (gState.gBoard[toCoord.i][toCoord.j]) {
-    console.log('eating !', gState.gBoard[toCoord.i][toCoord.j])
+  const isMoveTheKing =
+    gState.gBoard[fromCoord.i][fromCoord.j] === '♔' ||
+    gState.gBoard[fromCoord.i][fromCoord.j] === '♚'
+
+  const isCellWithPiece = gState.gBoard[toCoord.i][toCoord.j]
+
+  if (isCellWithPiece) {
+    // Eat !
+    const eatenPiece = gState.gBoard[toCoord.i][toCoord.j]
+    if (isBlackPiece(eatenPiece) === true) {
+      //model
+      gState.eatenPieces.white.push(eatenPiece)
+      //dom
+      document.querySelector(
+        '.eaten-pieces-white'
+      )!.innerHTML += `<span>${eatenPiece}</span>`
+    } else if (isBlackPiece(eatenPiece) === false) {
+      //model
+      gState.eatenPieces.black.push(eatenPiece)
+      //dom
+      document.querySelector(
+        '.eaten-pieces-black'
+      )!.innerHTML += `<span>${eatenPiece}</span>`
+    }
   }
+
   // update the MODEL
   const piece = gState.gBoard[fromCoord.i][fromCoord.j]
   gState.gBoard[fromCoord.i][fromCoord.j] = ''
@@ -185,6 +216,17 @@ function movePiece(
   ;(elToCell as HTMLElement).innerText = piece
 
   switchTurn()
+  if (isMoveTheKing) updateKingPos(toCoord, piece)
+  setIsKingThreatened()
+}
+
+function updateKingPos(toCoord: { i: number; j: number }, piece: string) {
+  if (piece === '♔') {
+    gState.kingPos.white = { i: toCoord.i, j: toCoord.j }
+  }
+  if (piece === '♚') {
+    gState.kingPos.black = { i: toCoord.i, j: toCoord.j }
+  }
 }
 
 export function switchTurn() {
@@ -202,6 +244,120 @@ export function getCellCoord(strCellId: string) {
   const parts = strCellId.split('-')
   const coord = { i: +parts[1], j: +parts[2] }
   return coord
+}
+
+function setIsKingThreatened(
+  board: string[][] = gState.gBoard,
+  isFakeCheck = false
+) {
+  // check around the king if there is opts to get eaten
+  let isFoundThreatenPiece = false
+  const kingPos = gState.isBlackTurn
+    ? gState.kingPos.black
+    : gState.kingPos.white
+
+  const knightOpts = getAllPossibleCoordsKnight(kingPos)
+  const queenOpts = getAllPossibleCoordsQueen(kingPos, true)
+  const pawnOpts = getAllPossibleKingCoordsToGetEatenPawn(kingPos)
+  const bishopOpts = getAllPossibleCoordsBishop(kingPos)
+  const rookOpts = getAllPossibleCoordsRook(kingPos)
+
+  queenOpts.forEach((coord) => {
+    const pieceToCheck = board[coord.i][coord.j]
+    // threatenPiece can eat the king from current coord:
+    const threatenPiece = gState.isBlackTurn
+      ? gState.gPieces.QUEEN_WHITE
+      : gState.gPieces.QUEEN_BLACK
+
+    if (pieceToCheck && pieceToCheck === threatenPiece) {
+      isFoundThreatenPiece = true
+      paintKingCellToRed(kingPos)
+    }
+  })
+
+  knightOpts.forEach((coord) => {
+    const pieceToCheck = board[coord.i][coord.j]
+    const threatenPiece = gState.isBlackTurn
+      ? gState.gPieces.KNIGHT_WHITE
+      : gState.gPieces.KNIGHT_BLACK
+
+    if (pieceToCheck && pieceToCheck === threatenPiece) {
+      isFoundThreatenPiece = true
+      paintKingCellToRed(kingPos)
+    }
+  })
+
+  pawnOpts.forEach((coord) => {
+    const pieceToCheck = board[coord.i][coord.j]
+    const threatenPiece = gState.isBlackTurn
+      ? gState.gPieces.PAWN_WHITE
+      : gState.gPieces.PAWN_BLACK
+
+    if (pieceToCheck && pieceToCheck === threatenPiece) {
+      isFoundThreatenPiece = true
+      paintKingCellToRed(kingPos)
+    }
+  })
+
+  bishopOpts.forEach((coord) => {
+    const pieceToCheck = board[coord.i][coord.j]
+    const threatenPiece = gState.isBlackTurn
+      ? gState.gPieces.BISHOP_WHITE
+      : gState.gPieces.BISHOP_BLACK
+
+    if (pieceToCheck && pieceToCheck === threatenPiece) {
+      isFoundThreatenPiece = true
+      paintKingCellToRed(kingPos)
+    }
+  })
+
+  rookOpts.forEach((coord) => {
+    const pieceToCheck = board[coord.i][coord.j]
+    const threatenPiece = gState.isBlackTurn
+      ? gState.gPieces.ROOK_WHITE
+      : gState.gPieces.ROOK_BLACK
+
+    if (pieceToCheck && pieceToCheck === threatenPiece) {
+      isFoundThreatenPiece = true
+      paintKingCellToRed(kingPos)
+    }
+  })
+
+  console.log({ isFoundThreatenPiece })
+
+  if (!isFoundThreatenPiece) {
+    // if (!isFoundThreatenPiece && gState.isKingThreatened) {
+    if (!isFakeCheck) {
+      gState.isKingThreatened = false
+      document.querySelector('.red')?.classList.remove('red')
+    }
+    return false
+  }
+
+  if (!isFakeCheck) gState.isKingThreatened = true
+
+  return true
+}
+
+// TODO : TO FINISH THIS FUNC, FIND A WAY TO BLOCK THE NEXT STEP, IF THE THE KING IS THREATENED
+function isNextMoveLegal(
+  elFromCell: HTMLElement | Element,
+  elToCell: HTMLElement | Element
+) {
+  const fromCoord = getCellCoord(elFromCell.id)
+  const toCoord = getCellCoord(elToCell.id)
+
+  const copiedState: IgState = JSON.parse(JSON.stringify(gState))
+
+  // update the MODEL
+  const piece = copiedState.gBoard[fromCoord.i][fromCoord.j]
+  copiedState.gBoard[fromCoord.i][fromCoord.j] = ''
+  copiedState.gBoard[toCoord.i][toCoord.j] = piece
+
+  const res = setIsKingThreatened(copiedState.gBoard, true)
+
+  console.log('isNextMoveLegal', res)
+  return res
 }
 
 // function restartGame() {

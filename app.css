@@ -37,6 +37,26 @@
   flex-direction: column;
   background-color: #646f40;
 }
+.eaten-pieces-white,
+.eaten-pieces-black {
+  background-color: rgba(255, 255, 255, 0.242);
+  min-height: 50px;
+  width: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.eaten-pieces-white span,
+.eaten-pieces-black span {
+  font-size: 34px;
+  /* width: 45px;
+  height: 45px; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .board table tr {
   display: flex;
 }
@@ -46,6 +66,13 @@
   padding: 0;
   cursor: pointer;
   text-align: center;
+}
+
+.board table tr .td.black.red {
+  background-color: #9b2d2d;
+}
+.board table tr .td.white.red {
+  background-color: #9b2d2d;
 }
 .board table tr .td.eatable {
   border-radius: 50%;

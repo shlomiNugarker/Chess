@@ -1,9 +1,12 @@
 import { gState, isColorPieceWorthCurrPlayerColor, isEmptyCell } from '../app'
 
-export function getAllPossibleCoordsQueen(pieceCoord: {
-  i: number
-  j: number
-}) {
+export function getAllPossibleCoordsQueen(
+  pieceCoord: {
+    i: number
+    j: number
+  },
+  isAskForEatenCoords: boolean = false
+) {
   let res: { i: number; j: number }[] = []
 
   const possibleDir = [
@@ -41,7 +44,12 @@ export function getAllPossibleCoordsQueen(pieceCoord: {
         res.push(nextCoord)
       } else {
         const piece = gState.gBoard[nextCoord.i][nextCoord.j]
-        if (!isColorPieceWorthCurrPlayerColor(piece)) res.push(nextCoord) //last coord -> eatable
+        if (!isAskForEatenCoords && !isColorPieceWorthCurrPlayerColor(piece)) {
+          //last coord -> eatable
+          res.push(nextCoord)
+        } else if (isAskForEatenCoords) {
+          res.push(nextCoord)
+        }
         break
       }
     }
