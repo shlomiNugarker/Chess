@@ -1,14 +1,16 @@
-import { gState, isColorPieceWorthCurrPlayerColor, isEmptyCell } from '../app'
+import { isColorPieceWorthCurrPlayerColor, isEmptyCell } from '../app'
 
 export function getAllPossibleCoordsQueen(
   pieceCoord: {
     i: number
     j: number
   },
+  board: string[][],
   isAskForEatenCoords: boolean = false
 ) {
   let res: { i: number; j: number }[] = []
 
+  console.table(board)
   const possibleDir = [
     // Bishop:
     { i: 1, j: -1 }, //bottomLeft
@@ -39,13 +41,12 @@ export function getAllPossibleCoordsQueen(
       ) {
         break
       }
-
-      if (isEmptyCell(nextCoord)) {
+      // console.log(nextCoord)
+      if (isEmptyCell(board, nextCoord)) {
         res.push(nextCoord)
       } else {
-        const piece = gState.gBoard[nextCoord.i][nextCoord.j]
+        const piece = board[nextCoord.i][nextCoord.j]
         if (!isAskForEatenCoords && !isColorPieceWorthCurrPlayerColor(piece)) {
-          //last coord -> eatable
           res.push(nextCoord)
         } else if (isAskForEatenCoords) {
           res.push(nextCoord)
@@ -54,6 +55,5 @@ export function getAllPossibleCoordsQueen(
       }
     }
   }
-
   return res
 }

@@ -1,9 +1,12 @@
-import { isColorPieceWorthCurrPlayerColor, isEmptyCell, gState } from '../app'
+import { gState, isColorPieceWorthCurrPlayerColor, isEmptyCell } from '../app'
 
-export function getAllPossibleCoordsBishop(pieceCoord: {
-  i: number
-  j: number
-}) {
+export function getAllPossibleCoordsBishop(
+  pieceCoord: {
+    i: number
+    j: number
+  },
+  board: string[][]
+) {
   let res: { i: number; j: number }[] = []
 
   const possibleDir = [
@@ -31,10 +34,10 @@ export function getAllPossibleCoordsBishop(pieceCoord: {
         break
       }
 
-      if (isEmptyCell(nextCoord)) {
+      if (isEmptyCell(gState.gBoard, nextCoord)) {
         res.push(nextCoord)
       } else {
-        const piece = gState.gBoard[nextCoord.i][nextCoord.j]
+        const piece = board[nextCoord.i][nextCoord.j]
         if (!isColorPieceWorthCurrPlayerColor(piece)) res.push(nextCoord) //last coord -> eatable
         break
       }

@@ -5,7 +5,10 @@ import {
   gState,
 } from '../app'
 
-export function getAllPossibleCoordsRook(pieceCoord: { i: number; j: number }) {
+export function getAllPossibleCoordsRook(
+  pieceCoord: { i: number; j: number },
+  board: string[][] = gState.gBoard
+) {
   let res: { i: number; j: number }[] = []
 
   const possibleDir = [
@@ -33,10 +36,10 @@ export function getAllPossibleCoordsRook(pieceCoord: { i: number; j: number }) {
         break
       }
 
-      if (isEmptyCell(nextCoord)) {
+      if (isEmptyCell(gState.gBoard, nextCoord)) {
         res.push(nextCoord)
       } else {
-        const piece = gState.gBoard[nextCoord.i][nextCoord.j]
+        const piece = board[nextCoord.i][nextCoord.j]
         if (!isColorPieceWorthCurrPlayerColor(piece))
           res.push(nextCoord) //last coord -> eatable
         else if (

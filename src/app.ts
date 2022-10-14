@@ -1,12 +1,13 @@
 import { buildBoard, renderBoard } from './board'
-import { cellClicked, getCellCoord } from './game'
+import { cellClicked, checkIfKingThreatened, getCellCoord } from './game'
 
 export interface IgState {
   isOn: boolean
   isBlackTurn: boolean
   gBoard: string[][]
   gSelectedElCell: HTMLElement | Element | null
-  isKingThreatened: boolean
+  isWhiteKingThreatened: boolean
+  isBlackKingThreatened: boolean
   kingPos: {
     black: { i: number; j: number }
     white: { i: number; j: number }
@@ -36,7 +37,8 @@ export const gState: IgState = {
   isBlackTurn: false,
   gBoard: [],
   gSelectedElCell: null,
-  isKingThreatened: false,
+  isWhiteKingThreatened: false,
+  isBlackKingThreatened: false,
   kingPos: {
     black: { i: 0, j: 4 },
     white: { i: 7, j: 4 },
@@ -99,8 +101,11 @@ export function isOptionToCastling(pieceToCastling: string) {
   return false
 }
 
-export function isEmptyCell(coord: { i: number; j: number }) {
-  return gState.gBoard[coord.i][coord.j] === ''
+export function isEmptyCell(
+  board: string[][],
+  coord: { i: number; j: number }
+) {
+  return board[coord.i][coord.j] === ''
 }
 
 export function isBlackPiece(piece: string): boolean | undefined {
@@ -144,6 +149,24 @@ export function isBlackPiece(piece: string): boolean | undefined {
     default:
       return undefined
   }
+}
+
+export function isNextStepLegal(
+  elFromCell: HTMLElement | Element,
+  elToCell: HTMLElement | Element
+) {
+  const fromCoord = getCellCoord(elFromCell.id)
+  const toCoord = getCellCoord(elToCell.id)
+
+  const copiedBoard: string[][] = JSON.parse(JSON.stringify(gState.gBoard))
+
+  const piece = copiedBoard[fromCoord.i][fromCoord.j]
+  copiedBoard[fromCoord.i][fromCoord.j] = ''
+  copiedBoard[toCoord.i][toCoord.j] = piece
+
+  const isKingThreatened = checkIfKingThreatened(copiedBoard, true)
+
+  return !isKingThreatened
 }
 
 // for castling
