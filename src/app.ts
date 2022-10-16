@@ -1,5 +1,6 @@
 import { buildBoard, renderBoard } from './board'
-import { cellClicked, checkIfKingThreatened, getCellCoord } from './game'
+import { checkIfKingThreatened } from './checkIfKingThreatened'
+import { cellClicked, getCellCoord } from './game'
 
 export interface IgState {
   isOn: boolean
@@ -158,14 +159,30 @@ export function isNextStepLegal(
   const fromCoord = getCellCoord(elFromCell.id)
   const toCoord = getCellCoord(elToCell.id)
 
-  const copiedBoard: string[][] = JSON.parse(JSON.stringify(gState.gBoard))
+  const copiedState: IgState = JSON.parse(JSON.stringify(gState))
 
-  const piece = copiedBoard[fromCoord.i][fromCoord.j]
-  copiedBoard[fromCoord.i][fromCoord.j] = ''
-  copiedBoard[toCoord.i][toCoord.j] = piece
+  const isKingMoved =
+    copiedState.gBoard[fromCoord.i][fromCoord.j] === '♔' ||
+    copiedState.gBoard[fromCoord.i][fromCoord.j] === '♚'
 
-  const isKingThreatened = checkIfKingThreatened(copiedBoard, true)
+  const piece = copiedState.gBoard[fromCoord.i][fromCoord.j]
+  copiedState.gBoard[fromCoord.i][fromCoord.j] = ''
+  copiedState.gBoard[toCoord.i][toCoord.j] = piece
 
+  if (isKingMoved) {
+    if (piece === '♔') {
+      copiedState.kingPos.white = { i: toCoord.i, j: toCoord.j }
+    }
+    if (piece === '♚') {
+      copiedState.kingPos.black = { i: toCoord.i, j: toCoord.j }
+    }
+  }
+
+  const isKingThreatened = checkIfKingThreatened(
+    copiedState.gBoard,
+    copiedState,
+    true
+  )
   return !isKingThreatened
 }
 

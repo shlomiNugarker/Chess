@@ -1,11 +1,11 @@
-import { gState, isColorPieceWorthCurrPlayerColor, isEmptyCell } from '../app'
+import { isColorPieceWorthCurrPlayerColor, isEmptyCell } from '../app'
 
 export function getAllPossibleCoordsKnight(
   pieceCoord: {
     i: number
     j: number
   },
-  board: string[][] = gState.gBoard
+  board: string[][]
 ) {
   let res: { i: number; j: number }[] = []
   const possibleSteps = [
@@ -30,7 +30,7 @@ export function getAllPossibleCoordsKnight(
       nextCoord.j >= 0 &&
       nextCoord.j < 8
     ) {
-      if (isEmptyCell(gState.gBoard, nextCoord)) res.push(nextCoord)
+      if (isEmptyCell(board, nextCoord)) res.push(nextCoord)
       else {
         const piece = board[nextCoord.i][nextCoord.j]
         if (!isColorPieceWorthCurrPlayerColor(piece)) res.push(nextCoord) //-> eatable  coord

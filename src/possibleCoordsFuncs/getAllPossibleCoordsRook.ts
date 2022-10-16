@@ -2,12 +2,11 @@ import {
   isColorPieceWorthCurrPlayerColor,
   isEmptyCell,
   isOptionToCastling,
-  gState,
 } from '../app'
 
 export function getAllPossibleCoordsRook(
   pieceCoord: { i: number; j: number },
-  board: string[][] = gState.gBoard
+  board: string[][]
 ) {
   let res: { i: number; j: number }[] = []
 
@@ -36,7 +35,7 @@ export function getAllPossibleCoordsRook(
         break
       }
 
-      if (isEmptyCell(gState.gBoard, nextCoord)) {
+      if (isEmptyCell(board, nextCoord)) {
         res.push(nextCoord)
       } else {
         const piece = board[nextCoord.i][nextCoord.j]

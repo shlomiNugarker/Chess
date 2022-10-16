@@ -10,7 +10,6 @@ export function getAllPossibleCoordsQueen(
 ) {
   let res: { i: number; j: number }[] = []
 
-  console.table(board)
   const possibleDir = [
     // Bishop:
     { i: 1, j: -1 }, //bottomLeft

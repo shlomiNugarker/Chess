@@ -1,17 +1,18 @@
-import { cleanBoard, markCells, paintKingCellToRed } from './board'
+import { cleanBoard, markCells } from './board'
 import { getAllPossibleCoordsBishop } from './possibleCoordsFuncs/getAllPossibleCoordsBishop'
 import { getAllPossibleCoordsKing } from './possibleCoordsFuncs/getAllPossibleCoordsKing'
 import { getAllPossibleCoordsKnight } from './possibleCoordsFuncs/getAllPossibleCoordsKnight'
 import { getAllPossibleCoordsPawn } from './possibleCoordsFuncs/getAllPossibleCoordsPawn'
 import { getAllPossibleCoordsQueen } from './possibleCoordsFuncs/getAllPossibleCoordsQueen'
 import { getAllPossibleCoordsRook } from './possibleCoordsFuncs/getAllPossibleCoordsRook'
-import { getAllPossibleKingCoordsToGetEatenPawn } from './possibleCoordsFuncs/getAllPossibleKingCoordsToGetEatenPawn'
+
 import {
   isColorPieceWorthCurrPlayerColor,
   gState,
   isBlackPiece,
   isNextStepLegal,
 } from './app'
+import { checkIfKingThreatened } from './checkIfKingThreatened'
 
 function doCastling(elFromCell: HTMLElement | Element, elToCell: Element) {
   console.log(elFromCell, elToCell)
@@ -93,7 +94,7 @@ export function cellClicked(ev: MouseEvent) {
     // console.log('ev.target.id: ', ev.target)
     const cellCoord = getCellCoord(ev.target.id)
     const piece = gState.gBoard[cellCoord.i][cellCoord.j]
-    const isEevSelected = ev.target.classList.contains('selected')
+    const isEvSelected = ev.target.classList.contains('selected')
     const isEvMarked = ev.target.classList.contains('mark')
     const isEvCastling = ev.target.classList.contains('castling')
     const isEvEatable = ev.target.classList.contains('eatable')
@@ -114,7 +115,7 @@ export function cellClicked(ev: MouseEvent) {
     }
     if (!isColorPieceWorthCurrPlayerColor(piece) && piece !== '') return
 
-    if (isEevSelected) {
+    if (isEvSelected) {
       ev.target.classList.remove('selected')
       gState.gSelectedElCell = null
       cleanBoard()
@@ -149,7 +150,7 @@ function getPossibleCoords(
   switch (piece) {
     case gState.gPieces.KING_WHITE:
     case gState.gPieces.KING_BLACK:
-      possibleCoords = getAllPossibleCoordsKing(cellCoord)
+      possibleCoords = getAllPossibleCoordsKing(gState.gBoard, cellCoord)
       break
     case gState.gPieces.QUEEN_WHITE:
     case gState.gPieces.QUEEN_BLACK:
@@ -157,7 +158,7 @@ function getPossibleCoords(
       break
     case gState.gPieces.ROOK_BLACK:
     case gState.gPieces.ROOK_WHITE:
-      possibleCoords = getAllPossibleCoordsRook(cellCoord)
+      possibleCoords = getAllPossibleCoordsRook(cellCoord, gState.gBoard)
       break
     case gState.gPieces.BISHOP_BLACK:
     case gState.gPieces.BISHOP_WHITE:
@@ -223,10 +224,13 @@ function movePiece(
   switchTurn()
   if (isKingMoved) updateKingPos(toCoord, piece)
 
-  checkIfKingThreatened(gState.gBoard)
+  checkIfKingThreatened(gState.gBoard, gState)
 }
 
-function updateKingPos(toCoord: { i: number; j: number }, piece: string) {
+export function updateKingPos(
+  toCoord: { i: number; j: number },
+  piece: string
+) {
   if (piece === '♔') {
     gState.kingPos.white = { i: toCoord.i, j: toCoord.j }
   }
@@ -250,102 +254,6 @@ export function getCellCoord(strCellId: string) {
   const parts = strCellId.split('-')
   const coord = { i: +parts[1], j: +parts[2] }
   return coord
-}
-
-export function checkIfKingThreatened(board: string[][], isFakeCheck = false) {
-  let isFoundThreatenPiece = false
-  let kingPos = gState.isBlackTurn ? gState.kingPos.black : gState.kingPos.white
-
-  const knightOpts = getAllPossibleCoordsKnight(kingPos, board)
-  const queenOpts = getAllPossibleCoordsQueen(kingPos, board, true)
-  const pawnOpts = getAllPossibleKingCoordsToGetEatenPawn(kingPos)
-  const bishopOpts = getAllPossibleCoordsBishop(kingPos, board)
-  const rookOpts = getAllPossibleCoordsRook(kingPos, board)
-
-  // const allCords = { knightOpts, queenOpts, pawnOpts, bishopOpts, rookOpts }
-
-  !isFoundThreatenPiece &&
-    queenOpts.forEach((coord) => {
-      const pieceToCheck = board[coord.i][coord.j]
-      const threatenPiece = gState.isBlackTurn
-        ? gState.gPieces.QUEEN_WHITE
-        : gState.gPieces.QUEEN_BLACK
-
-      if (pieceToCheck && pieceToCheck === threatenPiece) {
-        isFoundThreatenPiece = true
-        !isFakeCheck && paintKingCellToRed(kingPos)
-      }
-    })
-
-  !isFoundThreatenPiece &&
-    knightOpts.forEach((coord) => {
-      const pieceToCheck = board[coord.i][coord.j]
-      const threatenPiece = gState.isBlackTurn
-        ? gState.gPieces.KNIGHT_WHITE
-        : gState.gPieces.KNIGHT_BLACK
-
-      if (pieceToCheck && pieceToCheck === threatenPiece) {
-        isFoundThreatenPiece = true
-        !isFakeCheck && paintKingCellToRed(kingPos)
-      }
-    })
-
-  !isFoundThreatenPiece &&
-    pawnOpts.forEach((coord) => {
-      const pieceToCheck = board[coord.i][coord.j]
-      const threatenPiece = gState.isBlackTurn
-        ? gState.gPieces.PAWN_WHITE
-        : gState.gPieces.PAWN_BLACK
-
-      if (pieceToCheck && pieceToCheck === threatenPiece) {
-        isFoundThreatenPiece = true
-        !isFakeCheck && paintKingCellToRed(kingPos)
-      }
-    })
-
-  !isFoundThreatenPiece &&
-    bishopOpts.forEach((coord) => {
-      const pieceToCheck = board[coord.i][coord.j]
-      const threatenPiece = gState.isBlackTurn
-        ? gState.gPieces.BISHOP_WHITE
-        : gState.gPieces.BISHOP_BLACK
-
-      if (pieceToCheck && pieceToCheck === threatenPiece) {
-        isFoundThreatenPiece = true
-        !isFakeCheck && paintKingCellToRed(kingPos)
-      }
-    })
-
-  !isFoundThreatenPiece &&
-    rookOpts.forEach((coord) => {
-      const pieceToCheck = board[coord.i][coord.j]
-      const threatenPiece = gState.isBlackTurn
-        ? gState.gPieces.ROOK_WHITE
-        : gState.gPieces.ROOK_BLACK
-
-      if (pieceToCheck && pieceToCheck === threatenPiece) {
-        isFoundThreatenPiece = true
-        !isFakeCheck && paintKingCellToRed(kingPos)
-      }
-    })
-
-  if (!isFoundThreatenPiece) {
-    if (!isFakeCheck) {
-      gState.isBlackTurn
-        ? (gState.isBlackKingThreatened = false)
-        : (gState.isWhiteKingThreatened = false)
-
-      document.querySelector('.red')?.classList.remove('red')
-    }
-    return false
-  }
-  if (!isFakeCheck) {
-    gState.isBlackTurn
-      ? (gState.isBlackKingThreatened = true)
-      : (gState.isWhiteKingThreatened = true)
-  }
-
-  return true
 }
 
 // function restartGame() {

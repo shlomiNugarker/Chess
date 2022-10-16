@@ -1,4 +1,4 @@
-import { gState, isColorPieceWorthCurrPlayerColor, isEmptyCell } from '../app'
+import { isColorPieceWorthCurrPlayerColor, isEmptyCell } from '../app'
 
 export function getAllPossibleCoordsBishop(
   pieceCoord: {
@@ -34,7 +34,7 @@ export function getAllPossibleCoordsBishop(
         break
       }
 
-      if (isEmptyCell(gState.gBoard, nextCoord)) {
+      if (isEmptyCell(board, nextCoord)) {
         res.push(nextCoord)
       } else {
         const piece = board[nextCoord.i][nextCoord.j]

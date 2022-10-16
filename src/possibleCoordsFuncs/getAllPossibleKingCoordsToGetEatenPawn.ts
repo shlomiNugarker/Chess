@@ -33,5 +33,6 @@ export function getAllPossibleKingCoordsToGetEatenPawn(_kingCoord: {
       res.push(possibleSteps[k])
     }
   }
+
   return res
 }

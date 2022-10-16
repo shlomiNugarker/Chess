@@ -1,7 +1,10 @@
 import { isColorPieceWorthCurrPlayerColor, isEmptyCell, gState } from '../app'
 import { getCellCoord } from '../game'
 
-export function getAllPossibleCoordsKing(pieceCoord: { i: number; j: number }) {
+export function getAllPossibleCoordsKing(
+  board: string[][],
+  pieceCoord: { i: number; j: number }
+) {
   let res: { i: number; j: number }[] = []
 
   const possibleSteps = [
@@ -26,9 +29,9 @@ export function getAllPossibleCoordsKing(pieceCoord: { i: number; j: number }) {
       nextCoord.j >= 0 &&
       nextCoord.j < 8
     ) {
-      if (isEmptyCell(gState.gBoard, nextCoord)) res.push(nextCoord)
+      if (isEmptyCell(board, nextCoord)) res.push(nextCoord)
       else {
-        const piece = gState.gBoard[nextCoord.i][nextCoord.j]
+        const piece = board[nextCoord.i][nextCoord.j]
         if (!isColorPieceWorthCurrPlayerColor(piece)) res.push(nextCoord) //push eatable coord
       }
     }
@@ -46,11 +49,11 @@ export function getAllPossibleCoordsKing(pieceCoord: { i: number; j: number }) {
 
   if (
     selectedCellCoord &&
-    gState.gBoard[selectedCellCoord.i][selectedCellCoord.j] ===
+    board[selectedCellCoord.i][selectedCellCoord.j] ===
       gState.gPieces.KING_WHITE
   ) {
     let elCell: HTMLElement | Element | null = null
-    if (!gState.gBoard[selectedCellCoord.i][selectedCellCoord.j + 2]) {
+    if (!board[selectedCellCoord.i][selectedCellCoord.j + 2]) {
       elCell = document.querySelector(
         `#cell-${selectedCellCoord.i}-${selectedCellCoord.j + 3}`
       )
