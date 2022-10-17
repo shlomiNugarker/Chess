@@ -1,5 +1,5 @@
-import { isColorPieceWorthCurrPlayerColor, isEmptyCell, gState } from '../app'
-import { getCellCoord } from '../game'
+import { isColorPieceWorthCurrPlayerColor, isEmptyCell } from '../app'
+// import { getCellCoord } from '../game'
 
 export function getAllPossibleCoordsKing(
   board: string[][],
@@ -38,27 +38,29 @@ export function getAllPossibleCoordsKing(
   }
 
   // mark fake tds for cadtling:
-  let selectedCellCoord: {
-    i: number
-    j: number
-  } | null = null
+  // let selectedCellCoord: {
+  //   i: number
+  //   j: number
+  // } | null = null
 
-  if (gState.gSelectedElCell) {
-    selectedCellCoord = getCellCoord(gState.gSelectedElCell.id)
-  }
+  // if (gState.gSelectedElCell) {
+  //   selectedCellCoord = getCellCoord(gState.gSelectedElCell.id)
+  // }
 
-  if (
-    selectedCellCoord &&
-    board[selectedCellCoord.i][selectedCellCoord.j] ===
-      gState.gPieces.KING_WHITE
-  ) {
-    let elCell: HTMLElement | Element | null = null
-    if (!board[selectedCellCoord.i][selectedCellCoord.j + 2]) {
-      elCell = document.querySelector(
-        `#cell-${selectedCellCoord.i}-${selectedCellCoord.j + 3}`
-      )
-      ;(elCell as HTMLElement).classList.add('castling')
-    }
-  }
+  // if (
+  //   selectedCellCoord &&
+  //   board[selectedCellCoord.i][selectedCellCoord.j] ===
+  //     gState.gPieces.KING_WHITE
+  // ) {
+  //   // let elCell: HTMLElement | Element | null = null
+  //   // if (!board[selectedCellCoord.i][selectedCellCoord.j + 2]) {
+  //   //   elCell = document.querySelector(
+  //   //     `#cell-${selectedCellCoord.i}-${selectedCellCoord.j + 3}`
+  //   //   )
+  //   //   if (elCell) {
+  //   //     ;(elCell as HTMLElement).classList.add('castling')
+  //   //   }
+  //   // }
+  // }
   return res
 }

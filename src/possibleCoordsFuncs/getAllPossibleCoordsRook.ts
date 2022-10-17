@@ -45,7 +45,7 @@ export function getAllPossibleCoordsRook(
           isColorPieceWorthCurrPlayerColor(piece) &&
           isOptionToCastling(piece)
         ) {
-          console.log('casling')
+          console.log('castling')
           res.push(nextCoord)
         }
         break

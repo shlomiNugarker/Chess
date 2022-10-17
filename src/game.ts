@@ -13,81 +13,73 @@ import {
   isNextStepLegal,
 } from './app'
 import { checkIfKingThreatened } from './checkIfKingThreatened'
+import { doCastling } from './doCastlimgFunc'
+// import { checkIfKingThreatened } from './checkIfKingThreatened'
 
-function doCastling(elFromCell: HTMLElement | Element, elToCell: Element) {
-  console.log(elFromCell, elToCell)
+// function doCastling(elFromCell: HTMLElement | Element, elToCell: Element) {
+//   const fromCoord = getCellCoord(elFromCell.id)
+//   const toCoord = getCellCoord(elToCell.id)
+//   console.log(toCoord, fromCoord)
 
-  // const fromCoord = getCellCoord(elFromCell.id)
-  // const toCoord = getCellCoord(elToCell.id)
-  // if (
-  //   gState.gBoard[toCoord.i][toCoord.j] === gState.gPieces.KING_WHITE
-  //   //  ||
-  //   // gBoard[toCoord.i][toCoord.j] === ROOK_WHITE
-  // ) {
-  //   const rookPiece = gState.gBoard[fromCoord.i][fromCoord.j]
-  //   const kingPiece = gState.gBoard[toCoord.i][toCoord.j]
-  //   gState.gBoard[fromCoord.i][fromCoord.j] = ''
-  //   gState.gBoard[toCoord.i][toCoord.j] = ''
-  //   if (
-  //     fromCoord.j === 0
-  //     // || toCoord.j === 4
-  //   ) {
-  //     gState.gBoard[7][2] = rookPiece
-  //     gState.gBoard[7][3] = kingPiece
-  //     // // update the DOM
-  //     ;(elFromCell as HTMLElement).innerText = ''
-  //     ;(elToCell as HTMLElement).innerText = ''
-  //     ;(document.querySelector(`#cell-7-3`) as HTMLElement).innerText =
-  //       rookPiece
-  //     ;(document.querySelector(`#cell-7-2`) as HTMLElement).innerText =
-  //       kingPiece
-  //     switchTurn()
-  //   } else if (
-  //     fromCoord.j === 7
-  //     // || toCoord.j === 4
-  //   ) {
-  //     gState.gBoard[7][6] = rookPiece
-  //     gState.gBoard[7][5] = kingPiece
-  //     // // update the DOM
-  //     ;(elFromCell as HTMLElement).innerText = ''
-  //     ;(elToCell as HTMLElement).innerText = ''
-  //     ;(document.querySelector(`#cell-7-6`) as HTMLElement).innerText =
-  //       rookPiece
-  //     ;(document.querySelector(`#cell-7-5`) as HTMLElement).innerText =
-  //       kingPiece
-  //     switchTurn()
-  //   }
-  // }
-  // if (gState.gBoard[toCoord.i][toCoord.j] === gState.gPieces.KING_BLACK) {
-  //   const rookPiece = gState.gBoard[fromCoord.i][fromCoord.j]
-  //   const kingPiece = gState.gBoard[toCoord.i][toCoord.j]
-  //   gState.gBoard[fromCoord.i][fromCoord.j] = ''
-  //   gState.gBoard[toCoord.i][toCoord.j] = ''
-  //   if (fromCoord.j === 0) {
-  //     gState.gBoard[0][2] = rookPiece
-  //     gState.gBoard[0][3] = kingPiece
-  //     // // update the DOM
-  //     ;(elFromCell as HTMLElement).innerText = ''
-  //     ;(elToCell as HTMLElement).innerText = ''
-  //     ;(document.querySelector(`#cell-0-3`) as HTMLElement).innerText =
-  //       rookPiece
-  //     ;(document.querySelector(`#cell-0-2`) as HTMLElement).innerText =
-  //       kingPiece
-  //     switchTurn()
-  //   } else if (fromCoord.j === 7) {
-  //     gState.gBoard[0][6] = rookPiece
-  //     gState.gBoard[0][5] = kingPiece
-  //     // // update the DOM
-  //     ;(elFromCell as HTMLElement).innerText = ''
-  //     ;(elToCell as HTMLElement).innerText = ''
-  //     ;(document.querySelector(`#cell-0-6`) as HTMLElement).innerText =
-  //       rookPiece
-  //     ;(document.querySelector(`#cell-0-5`) as HTMLElement).innerText =
-  //       kingPiece
-  //     switchTurn()
-  //   }
-  // }
-}
+//   if (gState.gBoard[toCoord.i][toCoord.j] === gState.gPieces.KING_WHITE) {
+//     const rookPiece = gState.gBoard[fromCoord.i][fromCoord.j]
+//     const kingPiece = gState.gBoard[toCoord.i][toCoord.j]
+//     gState.gBoard[fromCoord.i][fromCoord.j] = ''
+//     gState.gBoard[toCoord.i][toCoord.j] = ''
+//     if (fromCoord.j === 0) {
+//       gState.gBoard[7][2] = rookPiece
+//       gState.gBoard[7][3] = kingPiece
+//       // // update the DOM
+//       ;(elFromCell as HTMLElement).innerText = ''
+//       ;(elToCell as HTMLElement).innerText = ''
+//       ;(document.querySelector(`#cell-7-2`) as HTMLElement).innerText =
+//         rookPiece
+//       ;(document.querySelector(`#cell-7-3`) as HTMLElement).innerText =
+//         kingPiece
+//       switchTurn()
+//     } else if (fromCoord.j === 7) {
+//       gState.gBoard[7][5] = rookPiece
+//       gState.gBoard[7][6] = kingPiece
+//       // // update the DOM
+//       ;(elFromCell as HTMLElement).innerText = ''
+//       ;(elToCell as HTMLElement).innerText = ''
+//       ;(document.querySelector(`#cell-7-5`) as HTMLElement).innerText =
+//         rookPiece
+//       ;(document.querySelector(`#cell-7-6`) as HTMLElement).innerText =
+//         kingPiece
+//       switchTurn()
+//     }
+//   }
+//   if (gState.gBoard[toCoord.i][toCoord.j] === gState.gPieces.KING_BLACK) {
+//     const rookPiece = gState.gBoard[fromCoord.i][fromCoord.j]
+//     const kingPiece = gState.gBoard[toCoord.i][toCoord.j]
+//     gState.gBoard[fromCoord.i][fromCoord.j] = ''
+//     gState.gBoard[toCoord.i][toCoord.j] = ''
+//     if (fromCoord.j === 0) {
+//       gState.gBoard[0][3] = rookPiece
+//       gState.gBoard[0][2] = kingPiece
+//       // // update the DOM
+//       ;(elFromCell as HTMLElement).innerText = ''
+//       ;(elToCell as HTMLElement).innerText = ''
+//       ;(document.querySelector(`#cell-0-3`) as HTMLElement).innerText =
+//         rookPiece
+//       ;(document.querySelector(`#cell-0-2`) as HTMLElement).innerText =
+//         kingPiece
+//       switchTurn()
+//     } else if (fromCoord.j === 7) {
+//       gState.gBoard[0][5] = rookPiece
+//       gState.gBoard[0][6] = kingPiece
+//       // // update the DOM
+//       ;(elFromCell as HTMLElement).innerText = ''
+//       ;(elToCell as HTMLElement).innerText = ''
+//       ;(document.querySelector(`#cell-0-5`) as HTMLElement).innerText =
+//         rookPiece
+//       ;(document.querySelector(`#cell-0-6`) as HTMLElement).innerText =
+//         kingPiece
+//       switchTurn()
+//     }
+//   }
+// }
 
 export function cellClicked(ev: MouseEvent) {
   if (ev.target instanceof Element) {
@@ -101,13 +93,12 @@ export function cellClicked(ev: MouseEvent) {
 
     if (isEvEatable && gState.gSelectedElCell) {
       const isMoveLegal = isNextStepLegal(gState.gSelectedElCell, ev.target)
-
       if (!isMoveLegal) return
-
       movePiece(gState.gSelectedElCell, ev.target)
       cleanBoard()
       return
     }
+
     if (isEvCastling && gState.gSelectedElCell) {
       doCastling(gState.gSelectedElCell, ev.target)
       cleanBoard()
@@ -121,6 +112,7 @@ export function cellClicked(ev: MouseEvent) {
       cleanBoard()
       return
     }
+
     if (isEvMarked && gState.gSelectedElCell) {
       const isMoveLegal = isNextStepLegal(gState.gSelectedElCell, ev.target)
 
@@ -231,12 +223,15 @@ export function updateKingPos(
   toCoord: { i: number; j: number },
   piece: string
 ) {
+  console.log('updateKingPos()', toCoord, piece)
+
   if (piece === '♔') {
     gState.kingPos.white = { i: toCoord.i, j: toCoord.j }
   }
   if (piece === '♚') {
     gState.kingPos.black = { i: toCoord.i, j: toCoord.j }
   }
+  console.log(gState)
 }
 
 export function switchTurn() {
@@ -255,6 +250,9 @@ export function getCellCoord(strCellId: string) {
   const coord = { i: +parts[1], j: +parts[2] }
   return coord
 }
+
+// TODO: ADD FUNC TO CHECK IF CASTLING IS LEGAL
+// function isCastlingLegal(){}
 
 // function restartGame() {
 //   gState.gBoard = buildBoard()

@@ -1,6 +1,7 @@
-import { gState, IgState } from './app'
+import { IgState } from './app'
 import { paintKingCellToRed } from './board'
 import { getAllPossibleCoordsBishop } from './possibleCoordsFuncs/getAllPossibleCoordsBishop'
+// import { getAllPossibleCoordsKing } from './possibleCoordsFuncs/getAllPossibleCoordsKing'
 import { getAllPossibleCoordsKnight } from './possibleCoordsFuncs/getAllPossibleCoordsKnight'
 import { getAllPossibleCoordsQueen } from './possibleCoordsFuncs/getAllPossibleCoordsQueen'
 import { getAllPossibleCoordsRook } from './possibleCoordsFuncs/getAllPossibleCoordsRook'
@@ -15,13 +16,14 @@ export function checkIfKingThreatened(
 
   let kingPos = stateToCheck.isBlackTurn
     ? stateToCheck.kingPos.black
-    : gState.kingPos.white
+    : stateToCheck.kingPos.white
 
   const knightOpts = getAllPossibleCoordsKnight(kingPos, board)
   const queenOpts = getAllPossibleCoordsQueen(kingPos, board, true)
-  const pawnOpts = getAllPossibleKingCoordsToGetEatenPawn(kingPos)
+  const pawnOpts = getAllPossibleKingCoordsToGetEatenPawn(kingPos, stateToCheck)
   const bishopOpts = getAllPossibleCoordsBishop(kingPos, board)
   const rookOpts = getAllPossibleCoordsRook(kingPos, board)
+  // const kingOpts = getAllPossibleCoordsKing(board, kingPos)
 
   // const allCords = {
   //   knightOpts,
@@ -29,16 +31,19 @@ export function checkIfKingThreatened(
   //   pawnOpts,
   //   bishopOpts,
   //   rookOpts,
+  //   kingOpts,
   // }
 
-  // console.log(allCords)
+  // console.table(board)
+  // console.log({ allCords })
+  // console.log(stateToCheck)
 
   !isFoundThreatenPiece &&
     queenOpts.forEach((coord) => {
       const pieceToCheck = board[coord.i][coord.j]
-      const threatenPiece = gState.isBlackTurn
-        ? gState.gPieces.QUEEN_WHITE
-        : gState.gPieces.QUEEN_BLACK
+      const threatenPiece = stateToCheck.isBlackTurn
+        ? stateToCheck.gPieces.QUEEN_WHITE
+        : stateToCheck.gPieces.QUEEN_BLACK
 
       if (pieceToCheck && pieceToCheck === threatenPiece) {
         console.log(pieceToCheck, '===', threatenPiece)
@@ -50,9 +55,9 @@ export function checkIfKingThreatened(
   !isFoundThreatenPiece &&
     knightOpts.forEach((coord) => {
       const pieceToCheck = board[coord.i][coord.j]
-      const threatenPiece = gState.isBlackTurn
-        ? gState.gPieces.KNIGHT_WHITE
-        : gState.gPieces.KNIGHT_BLACK
+      const threatenPiece = stateToCheck.isBlackTurn
+        ? stateToCheck.gPieces.KNIGHT_WHITE
+        : stateToCheck.gPieces.KNIGHT_BLACK
 
       if (pieceToCheck && pieceToCheck === threatenPiece) {
         console.log(pieceToCheck, '===', threatenPiece)
@@ -64,9 +69,9 @@ export function checkIfKingThreatened(
   !isFoundThreatenPiece &&
     pawnOpts.forEach((coord) => {
       const pieceToCheck = board[coord.i][coord.j]
-      const threatenPiece = gState.isBlackTurn
-        ? gState.gPieces.PAWN_WHITE
-        : gState.gPieces.PAWN_BLACK
+      const threatenPiece = stateToCheck.isBlackTurn
+        ? stateToCheck.gPieces.PAWN_WHITE
+        : stateToCheck.gPieces.PAWN_BLACK
 
       if (pieceToCheck && pieceToCheck === threatenPiece) {
         console.log(pieceToCheck, '===', threatenPiece)
@@ -78,9 +83,9 @@ export function checkIfKingThreatened(
   !isFoundThreatenPiece &&
     bishopOpts.forEach((coord) => {
       const pieceToCheck = board[coord.i][coord.j]
-      const threatenPiece = gState.isBlackTurn
-        ? gState.gPieces.BISHOP_WHITE
-        : gState.gPieces.BISHOP_BLACK
+      const threatenPiece = stateToCheck.isBlackTurn
+        ? stateToCheck.gPieces.BISHOP_WHITE
+        : stateToCheck.gPieces.BISHOP_BLACK
 
       if (pieceToCheck && pieceToCheck === threatenPiece) {
         console.log(pieceToCheck, '===', threatenPiece)
@@ -92,9 +97,9 @@ export function checkIfKingThreatened(
   !isFoundThreatenPiece &&
     rookOpts.forEach((coord) => {
       const pieceToCheck = board[coord.i][coord.j]
-      const threatenPiece = gState.isBlackTurn
-        ? gState.gPieces.ROOK_WHITE
-        : gState.gPieces.ROOK_BLACK
+      const threatenPiece = stateToCheck.isBlackTurn
+        ? stateToCheck.gPieces.ROOK_WHITE
+        : stateToCheck.gPieces.ROOK_BLACK
 
       if (pieceToCheck && pieceToCheck === threatenPiece) {
         console.log(pieceToCheck, '===', threatenPiece)
@@ -103,20 +108,34 @@ export function checkIfKingThreatened(
       }
     })
 
+  //   !isFoundThreatenPiece &&
+  //     kingOpts.forEach((coord) => {
+  //       const pieceToCheck = board[coord.i][coord.j]
+  //       const threatenPiece = stateToCheck.isBlackTurn
+  //         ? stateToCheck.gPieces.PAWN_WHITE
+  //         : stateToCheck.gPieces.PAWN_BLACK
+
+  //       if (pieceToCheck && pieceToCheck === threatenPiece) {
+  //         console.log(pieceToCheck, '===', threatenPiece)
+  //         isFoundThreatenPiece = true
+  //         !isFakeCheck && paintKingCellToRed(kingPos)
+  //       }
+  //     })
+
   if (!isFoundThreatenPiece) {
     if (!isFakeCheck) {
-      gState.isBlackTurn
-        ? (gState.isBlackKingThreatened = false)
-        : (gState.isWhiteKingThreatened = false)
+      stateToCheck.isBlackTurn
+        ? (stateToCheck.isBlackKingThreatened = false)
+        : (stateToCheck.isWhiteKingThreatened = false)
 
       document.querySelector('.red')?.classList.remove('red')
     }
     return false
   }
   if (!isFakeCheck) {
-    gState.isBlackTurn
-      ? (gState.isBlackKingThreatened = true)
-      : (gState.isWhiteKingThreatened = true)
+    stateToCheck.isBlackTurn
+      ? (stateToCheck.isBlackKingThreatened = true)
+      : (stateToCheck.isWhiteKingThreatened = true)
   }
 
   return true

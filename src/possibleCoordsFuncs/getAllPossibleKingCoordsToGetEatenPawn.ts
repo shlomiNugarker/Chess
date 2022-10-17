@@ -1,25 +1,26 @@
-import { gState } from '../app'
+import { gState, IgState } from '../app'
 
-export function getAllPossibleKingCoordsToGetEatenPawn(_kingCoord: {
-  i: number
-  j: number
-}) {
+export function getAllPossibleKingCoordsToGetEatenPawn(
+  _kingCoord: {
+    i: number
+    j: number
+  },
+  state: IgState
+) {
   let res: { i: number; j: number }[] = []
 
   const { isBlackTurn } = gState
 
-  const kingPos = gState.isBlackTurn
-    ? gState.kingPos.black
-    : gState.kingPos.white
+  const kingPos = gState.isBlackTurn ? state.kingPos.black : state.kingPos.white
 
   const possibleSteps = [
     {
       i: isBlackTurn ? kingPos.i + 1 : kingPos.i - 1,
-      j: isBlackTurn ? kingPos.j + 1 : kingPos.j - 1,
+      j: isBlackTurn ? kingPos.j + 1 : kingPos.j + 1,
     },
     {
-      i: isBlackTurn ? kingPos.i + 1 : kingPos.i - 1,
-      j: isBlackTurn ? kingPos.j - 1 : kingPos.j + 1,
+      i: !isBlackTurn ? kingPos.i - 1 : kingPos.i - 1,
+      j: !isBlackTurn ? kingPos.j - 1 : kingPos.j + 1,
     },
   ]
 

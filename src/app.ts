@@ -1,5 +1,6 @@
 import { buildBoard, renderBoard } from './board'
 import { checkIfKingThreatened } from './checkIfKingThreatened'
+
 import { cellClicked, getCellCoord } from './game'
 
 export interface IgState {
@@ -9,6 +10,10 @@ export interface IgState {
   gSelectedElCell: HTMLElement | Element | null
   isWhiteKingThreatened: boolean
   isBlackKingThreatened: boolean
+  isCastlingLegal: {
+    white: boolean
+    black: boolean
+  }
   kingPos: {
     black: { i: number; j: number }
     white: { i: number; j: number }
@@ -40,6 +45,10 @@ export const gState: IgState = {
   gSelectedElCell: null,
   isWhiteKingThreatened: false,
   isBlackKingThreatened: false,
+  isCastlingLegal: {
+    white: true,
+    black: true,
+  },
   kingPos: {
     black: { i: 0, j: 4 },
     white: { i: 7, j: 4 },
@@ -169,7 +178,11 @@ export function isNextStepLegal(
   copiedState.gBoard[fromCoord.i][fromCoord.j] = ''
   copiedState.gBoard[toCoord.i][toCoord.j] = piece
 
+  console.log({ isKingMoved })
+
   if (isKingMoved) {
+    console.log({ piece })
+
     if (piece === '♔') {
       copiedState.kingPos.white = { i: toCoord.i, j: toCoord.j }
     }
@@ -183,6 +196,9 @@ export function isNextStepLegal(
     copiedState,
     true
   )
+
+  console.log({ isKingThreatened })
+
   return !isKingThreatened
 }
 
