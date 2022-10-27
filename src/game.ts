@@ -14,72 +14,6 @@ import {
 } from './app'
 import { checkIfKingThreatened } from './checkIfKingThreatened'
 import { doCastling } from './doCastlimgFunc'
-// import { checkIfKingThreatened } from './checkIfKingThreatened'
-
-// function doCastling(elFromCell: HTMLElement | Element, elToCell: Element) {
-//   const fromCoord = getCellCoord(elFromCell.id)
-//   const toCoord = getCellCoord(elToCell.id)
-//   console.log(toCoord, fromCoord)
-
-//   if (gState.gBoard[toCoord.i][toCoord.j] === gState.gPieces.KING_WHITE) {
-//     const rookPiece = gState.gBoard[fromCoord.i][fromCoord.j]
-//     const kingPiece = gState.gBoard[toCoord.i][toCoord.j]
-//     gState.gBoard[fromCoord.i][fromCoord.j] = ''
-//     gState.gBoard[toCoord.i][toCoord.j] = ''
-//     if (fromCoord.j === 0) {
-//       gState.gBoard[7][2] = rookPiece
-//       gState.gBoard[7][3] = kingPiece
-//       // // update the DOM
-//       ;(elFromCell as HTMLElement).innerText = ''
-//       ;(elToCell as HTMLElement).innerText = ''
-//       ;(document.querySelector(`#cell-7-2`) as HTMLElement).innerText =
-//         rookPiece
-//       ;(document.querySelector(`#cell-7-3`) as HTMLElement).innerText =
-//         kingPiece
-//       switchTurn()
-//     } else if (fromCoord.j === 7) {
-//       gState.gBoard[7][5] = rookPiece
-//       gState.gBoard[7][6] = kingPiece
-//       // // update the DOM
-//       ;(elFromCell as HTMLElement).innerText = ''
-//       ;(elToCell as HTMLElement).innerText = ''
-//       ;(document.querySelector(`#cell-7-5`) as HTMLElement).innerText =
-//         rookPiece
-//       ;(document.querySelector(`#cell-7-6`) as HTMLElement).innerText =
-//         kingPiece
-//       switchTurn()
-//     }
-//   }
-//   if (gState.gBoard[toCoord.i][toCoord.j] === gState.gPieces.KING_BLACK) {
-//     const rookPiece = gState.gBoard[fromCoord.i][fromCoord.j]
-//     const kingPiece = gState.gBoard[toCoord.i][toCoord.j]
-//     gState.gBoard[fromCoord.i][fromCoord.j] = ''
-//     gState.gBoard[toCoord.i][toCoord.j] = ''
-//     if (fromCoord.j === 0) {
-//       gState.gBoard[0][3] = rookPiece
-//       gState.gBoard[0][2] = kingPiece
-//       // // update the DOM
-//       ;(elFromCell as HTMLElement).innerText = ''
-//       ;(elToCell as HTMLElement).innerText = ''
-//       ;(document.querySelector(`#cell-0-3`) as HTMLElement).innerText =
-//         rookPiece
-//       ;(document.querySelector(`#cell-0-2`) as HTMLElement).innerText =
-//         kingPiece
-//       switchTurn()
-//     } else if (fromCoord.j === 7) {
-//       gState.gBoard[0][5] = rookPiece
-//       gState.gBoard[0][6] = kingPiece
-//       // // update the DOM
-//       ;(elFromCell as HTMLElement).innerText = ''
-//       ;(elToCell as HTMLElement).innerText = ''
-//       ;(document.querySelector(`#cell-0-5`) as HTMLElement).innerText =
-//         rookPiece
-//       ;(document.querySelector(`#cell-0-6`) as HTMLElement).innerText =
-//         kingPiece
-//       switchTurn()
-//     }
-//   }
-// }
 
 export function cellClicked(ev: MouseEvent) {
   if (ev.target instanceof Element) {
@@ -231,7 +165,6 @@ export function updateKingPos(
   if (piece === '♚') {
     gState.kingPos.black = { i: toCoord.i, j: toCoord.j }
   }
-  console.log(gState)
 }
 
 export function switchTurn() {

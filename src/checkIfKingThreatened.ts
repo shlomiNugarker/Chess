@@ -1,7 +1,6 @@
 import { IgState } from './app'
 import { paintKingCellToRed } from './board'
 import { getAllPossibleCoordsBishop } from './possibleCoordsFuncs/getAllPossibleCoordsBishop'
-// import { getAllPossibleCoordsKing } from './possibleCoordsFuncs/getAllPossibleCoordsKing'
 import { getAllPossibleCoordsKnight } from './possibleCoordsFuncs/getAllPossibleCoordsKnight'
 import { getAllPossibleCoordsQueen } from './possibleCoordsFuncs/getAllPossibleCoordsQueen'
 import { getAllPossibleCoordsRook } from './possibleCoordsFuncs/getAllPossibleCoordsRook'
@@ -23,20 +22,6 @@ export function checkIfKingThreatened(
   const pawnOpts = getAllPossibleKingCoordsToGetEatenPawn(kingPos, stateToCheck)
   const bishopOpts = getAllPossibleCoordsBishop(kingPos, board)
   const rookOpts = getAllPossibleCoordsRook(kingPos, board)
-  // const kingOpts = getAllPossibleCoordsKing(board, kingPos)
-
-  // const allCords = {
-  //   knightOpts,
-  //   queenOpts,
-  //   pawnOpts,
-  //   bishopOpts,
-  //   rookOpts,
-  //   kingOpts,
-  // }
-
-  // console.table(board)
-  // console.log({ allCords })
-  // console.log(stateToCheck)
 
   !isFoundThreatenPiece &&
     queenOpts.forEach((coord) => {
@@ -46,7 +31,6 @@ export function checkIfKingThreatened(
         : stateToCheck.gPieces.QUEEN_BLACK
 
       if (pieceToCheck && pieceToCheck === threatenPiece) {
-        console.log(pieceToCheck, '===', threatenPiece)
         isFoundThreatenPiece = true
         !isFakeCheck && paintKingCellToRed(kingPos)
       }
@@ -60,7 +44,6 @@ export function checkIfKingThreatened(
         : stateToCheck.gPieces.KNIGHT_BLACK
 
       if (pieceToCheck && pieceToCheck === threatenPiece) {
-        console.log(pieceToCheck, '===', threatenPiece)
         isFoundThreatenPiece = true
         !isFakeCheck && paintKingCellToRed(kingPos)
       }
@@ -74,7 +57,6 @@ export function checkIfKingThreatened(
         : stateToCheck.gPieces.PAWN_BLACK
 
       if (pieceToCheck && pieceToCheck === threatenPiece) {
-        console.log(pieceToCheck, '===', threatenPiece)
         isFoundThreatenPiece = true
         !isFakeCheck && paintKingCellToRed(kingPos)
       }
@@ -88,7 +70,6 @@ export function checkIfKingThreatened(
         : stateToCheck.gPieces.BISHOP_BLACK
 
       if (pieceToCheck && pieceToCheck === threatenPiece) {
-        console.log(pieceToCheck, '===', threatenPiece)
         isFoundThreatenPiece = true
         !isFakeCheck && paintKingCellToRed(kingPos)
       }
@@ -102,25 +83,10 @@ export function checkIfKingThreatened(
         : stateToCheck.gPieces.ROOK_BLACK
 
       if (pieceToCheck && pieceToCheck === threatenPiece) {
-        console.log(pieceToCheck, '===', threatenPiece)
         isFoundThreatenPiece = true
         !isFakeCheck && paintKingCellToRed(kingPos)
       }
     })
-
-  //   !isFoundThreatenPiece &&
-  //     kingOpts.forEach((coord) => {
-  //       const pieceToCheck = board[coord.i][coord.j]
-  //       const threatenPiece = stateToCheck.isBlackTurn
-  //         ? stateToCheck.gPieces.PAWN_WHITE
-  //         : stateToCheck.gPieces.PAWN_BLACK
-
-  //       if (pieceToCheck && pieceToCheck === threatenPiece) {
-  //         console.log(pieceToCheck, '===', threatenPiece)
-  //         isFoundThreatenPiece = true
-  //         !isFakeCheck && paintKingCellToRed(kingPos)
-  //       }
-  //     })
 
   if (!isFoundThreatenPiece) {
     if (!isFakeCheck) {

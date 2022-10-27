@@ -7,10 +7,10 @@ export function doCastling(
 ) {
   const fromCoord = getCellCoord(elFromCell.id)
   const toCoord = getCellCoord(elToCell.id)
-  console.log(toCoord, fromCoord)
   let kingPiece: string = ''
   let newKingCell: { i: number; j: number } | null = null
 
+  // WHITE KING:
   if (
     gState.gBoard[toCoord.i][toCoord.j] === gState.gPieces.KING_WHITE &&
     gState.isCastlingLegal.white
@@ -46,6 +46,8 @@ export function doCastling(
       switchTurn()
     }
   }
+
+  // BLACK KING:
   if (
     gState.gBoard[toCoord.i][toCoord.j] === gState.gPieces.KING_BLACK &&
     gState.isCastlingLegal.black
@@ -80,8 +82,5 @@ export function doCastling(
       switchTurn()
     }
   }
-
-  console.log(toCoord)
-
   newKingCell && updateKingPos(newKingCell, kingPiece)
 }

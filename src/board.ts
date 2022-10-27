@@ -1,7 +1,6 @@
 import { gState, isColorPieceWorthCurrPlayerColor } from './app'
 
 export function buildBoard(): string[][] {
-  //build the board 8 * 8
   const board: string[][] = []
   for (let i = 0; i < 8; i++) {
     board[i] = []

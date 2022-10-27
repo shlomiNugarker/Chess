@@ -8,7 +8,7 @@
 .board .turn .turn-black {
   background-color: black;
   color: white;
-  height: 200px;
+  height: 240px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -20,7 +20,7 @@
 .board .turn .turn-white {
   background-color: white;
   color: black;
-  height: 200px;
+  height: 240px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -32,16 +32,16 @@
 .board table {
   border-spacing: 0;
   color: black;
-  font-size: 34px;
+  font-size: 44px;
   display: flex;
   flex-direction: column;
   background-color: #646f40;
 }
 .eaten-pieces-white,
 .eaten-pieces-black {
-  background-color: rgba(255, 255, 255, 0.242);
+  /* background-color: #ffffff3e; */
   min-height: 50px;
-  width: 400px;
+  width: 480px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -61,8 +61,8 @@
   display: flex;
 }
 .board table tr .td {
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   padding: 0;
   cursor: pointer;
   text-align: center;
@@ -104,8 +104,8 @@
   pointer-events: none;
   background-color: #646f40;
   border-radius: 50%;
-  width: 10px;
-  height: 10px;
+  width: 15px;
+  height: 15px;
 }
 
 * {
@@ -146,4 +146,102 @@ button {
 }
 button * {
   pointer-events: none;
-} /*# sourceMappingURL=styles.css.map */
+}
+
+/* MEDIA QUERY */
+@media (max-width: 475px) {
+  .board {
+  }
+  .board .turn .turn-black {
+    height: 160px;
+
+    width: 30px;
+  }
+  .board .turn .turn-black span {
+    writing-mode: vertical-lr;
+    text-orientation: upright;
+  }
+  .board .turn .turn-black.playing {
+  }
+  .board .turn .turn-white {
+    height: 160px;
+
+    width: 30px;
+  }
+  .board .turn .turn-white span {
+    writing-mode: vertical-lr;
+    text-orientation: upright;
+  }
+  .board .turn .turn-white.playing {
+  }
+  .board table {
+    width: 320px;
+    font-size: 34px;
+  }
+  .eaten-pieces-white,
+  .eaten-pieces-black {
+    width: 320px;
+  }
+  .eaten-pieces-white span,
+  .eaten-pieces-black span {
+  }
+  .board table tr {
+  }
+  .board table tr td.td {
+    width: 40px;
+    height: 40px;
+  }
+
+  .board table tr .td.black.red {
+  }
+  .board table tr .td.white.red {
+  }
+  .board table tr .td.eatable {
+  }
+  .board table tr .td.castling {
+  }
+  .board table tr .td.white {
+  }
+  .board table tr .td.black {
+  }
+  .board table tr .td.selected {
+  }
+  .board table tr .td.mark,
+  .board table tr .td.fake-mark {
+  }
+  .board table tr .td.mark:hover,
+  .board table tr .td.fake-mark:hover {
+  }
+  .board table tr .td.mark .span,
+  .board table tr .td.fake-mark .span {
+    width: 10px;
+    height: 10px;
+  }
+
+  * {
+  }
+
+  html {
+  }
+
+  body {
+    background-color: lightslategray;
+  }
+
+  img {
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p {
+  }
+
+  button {
+  }
+  button * {
+  }
+}

@@ -178,27 +178,21 @@ export function isNextStepLegal(
   copiedState.gBoard[fromCoord.i][fromCoord.j] = ''
   copiedState.gBoard[toCoord.i][toCoord.j] = piece
 
-  console.log({ isKingMoved })
-
   if (isKingMoved) {
-    console.log({ piece })
-
     if (piece === '♔') {
       copiedState.kingPos.white = { i: toCoord.i, j: toCoord.j }
+      gState.isCastlingLegal.white = false
     }
     if (piece === '♚') {
       copiedState.kingPos.black = { i: toCoord.i, j: toCoord.j }
+      gState.isCastlingLegal.black = false
     }
   }
-
   const isKingThreatened = checkIfKingThreatened(
     copiedState.gBoard,
     copiedState,
     true
   )
-
-  console.log({ isKingThreatened })
-
   return !isKingThreatened
 }
 
